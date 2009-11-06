@@ -48,6 +48,15 @@ template '/admin/crud' => page {
 
 template '/admin' => page {
     title is 'admin page';
+    render_region(name => 'new_version', path => '/admin/add_version');
+};
+
+template '/admin/add_version' => sub {
+    my $action = new_action(class => 'NewVersion');
+    form {
+        render_action($action);
+        form_submit(label => _('Update'));
+    };
 };
 
 1;
