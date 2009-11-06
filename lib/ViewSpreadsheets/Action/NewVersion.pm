@@ -28,6 +28,9 @@ use Jifty::Action schema {
         render as 'DateTime';
     param file =>
         render as 'Upload';
+    # testfile is only used with unit tests
+    param 'testfile' =>
+        render as 'hidden';
 
 };
 
@@ -37,17 +40,30 @@ use Jifty::Action schema {
 
 sub take_action {
     my $self = shift;
-    
-    # Custom action code
    
-    my $fh = $self->argument_value('file');
-    my $filename = scalar($fh);
-    warn $filename;
-    local $/;
-    binmode $fh;
-    open FILE, '>', $filename;
-    print FILE <$fh>;
-    close FILE;
+    # TODO: vrfy name or use a static namefile
+    my $testfile = $self->argument_value('testfile') || 0;
+
+    my $fh;
+    if ($testfile) { 
+       open $fh, 't/'.$testfile; }
+     else {
+       $fh = $self->argument_value('file'); };
+
+    my $filename = $testfile || scalar($fh);
+    #warn $filename;
+
+    # TODO don't allow same file name
+
+    if (!$testfile) {
+        local $/;
+        binmode $fh;
+        # TODO: choose destination dir
+        open FILE, '>', $filename;
+        print FILE <$fh>;
+        close FILE;
+    };
+
 
     my $version = ViewSpreadsheets::Model::Version->new();
     $version->create(
@@ -59,7 +75,7 @@ sub take_action {
     $self->report_success if not $self->result->failure;
     
     return 1;
-}
+};
 
 =head2 report_success
 
@@ -69,7 +85,7 @@ sub report_success {
     my $self = shift;
     # Your success message here
     $self->result->message('Success');
-}
+};
 
 1;
 
