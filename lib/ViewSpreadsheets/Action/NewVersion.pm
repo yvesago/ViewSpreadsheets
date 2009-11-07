@@ -43,6 +43,11 @@ use Spreadsheet::ParseExcel;
 sub take_action {
     my $self = shift;
    
+    my $domid = $self->argument_value('domain');
+    # TODO: return error if 0
+    my $domain = ViewSpreadsheets::Model::Domain->new();
+    $domain->load($domid);
+
     # TODO: vrfy name or use a static namefile
     my $testfile = $self->argument_value('testfile') || 0;
 
@@ -66,30 +71,36 @@ sub take_action {
         close FILE;
     };
 
-   my $excel = Spreadsheet::ParseExcel::Workbook->Parse('t/'.$filename);
-   foreach my $sheet (@{$excel->{Worksheet}}) {
-       printf("Sheet: %s\n", $sheet->{Name});
-       $sheet->{MaxRow} ||= $sheet->{MinRow};
-        next if !$sheet->{MaxRow};
-       foreach my $row ($sheet->{MinRow} .. $sheet->{MaxRow}) {
-           $sheet->{MaxCol} ||= $sheet->{MinCol};
-            next if !$sheet->{MaxiCol};
-           foreach my $col ($sheet->{MinCol} ..  $sheet->{MaxCol}) {
-               my $cell = $sheet->{Cells}[$row][$col];
-               if ($cell) {
-                   printf("( %s , %s ) => %s\n", $row, $col, $cell->{Val});
-               }
-           }
-       }
-   }
- return 1;
-
     my $version = ViewSpreadsheets::Model::Version->new();
     $version->create(
         sdomain => $self->argument_value('domain'), 
         start_date => $self->argument_value('start_date'),
         end_date => $self->argument_value('end_date'),
         filename => $filename);
+
+   my $spreadsheet = ViewSpreadsheets::Model::Spreadsheet->new();
+
+   my $excel = Spreadsheet::ParseExcel::Workbook->Parse('t/'.$filename);
+   foreach my $sheet (@{$excel->{Worksheet}}) {
+       #printf("Sheet: %s\n", $sheet->{Name});
+       $sheet->{MaxRow} ||= $sheet->{MinRow};
+        next if ! defined $sheet->{MaxRow};
+       foreach my $row ($sheet->{MinRow} .. $sheet->{MaxRow}) {
+           my $valid_row = 0;
+           $valid_row = 1
+             if ($sheet->{Cells}[$row][$domain->filedesc->pos_pp -1] && $sheet->{Cells}[$row][$domain->filedesc->pos_pp -1]->{Val} =~m/^\d/ );
+#            print 'ref: '.$sheet->{Cells}[$row][$domain->filedesc->pos_ref1]->{Val}.' prix: '.$sheet->{Cells}[$row][$domain->filedesc->pos_pp]->{Val}."\n"  if $valid_row; 
+           $spreadsheet->create(
+            ref1 => $sheet->{Cells}[$row][$domain->filedesc->pos_ref1 -1 ]->{Val},
+            plabel => $sheet->{Cells}[$row][$domain->filedesc->pos_plabel -1]->{Val},
+            refplabel => $sheet->{Cells}[$row][$domain->filedesc->pos_refplabel -1]->{Val},
+            pdesc => $sheet->{Cells}[$row][$domain->filedesc->pos_pdesc -1]->{Val},
+            pp => $sheet->{Cells}[$row][$domain->filedesc->pos_pp -1]->{Val},
+            rate => $sheet->{Cells}[$row][$domain->filedesc->pos_rate -1]->{Val},
+            price => $sheet->{Cells}[$row][$domain->filedesc->pos_price -1]->{Val},
+            version => $version->id) if $valid_row;
+            }
+   }
 
     $self->report_success if not $self->result->failure;
     

@@ -7,8 +7,6 @@ use Jifty::DBI::Schema;
 use ViewSpreadsheets::Record schema {
     column version =>
         refers_to ViewSpreadsheets::Model::Version;
-    column name =>
-        is mandatory;
     column 'ref1' ;
     column 'plabel' ;
     column 'refplabel';

@@ -31,3 +31,10 @@ Jifty->web->new_action(
 my $Version = ViewSpreadsheets::Model::Version->new();
   $Version->load(1);
   warn $Version->sdomain->name;
+
+my $spreadCol = ViewSpreadsheets::Model::SpreadsheetCollection->new();
+$spreadCol->limit(column => 'version', value => $Version->id);
+
+while (my $s = $spreadCol->next) {
+    warn $s->price;
+};
