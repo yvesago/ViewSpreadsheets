@@ -38,6 +38,8 @@ use Jifty::Action schema {
 
 =cut
 
+use Spreadsheet::ParseExcel;
+
 sub take_action {
     my $self = shift;
    
@@ -64,6 +66,23 @@ sub take_action {
         close FILE;
     };
 
+   my $excel = Spreadsheet::ParseExcel::Workbook->Parse('t/'.$filename);
+   foreach my $sheet (@{$excel->{Worksheet}}) {
+       printf("Sheet: %s\n", $sheet->{Name});
+       $sheet->{MaxRow} ||= $sheet->{MinRow};
+        next if !$sheet->{MaxRow};
+       foreach my $row ($sheet->{MinRow} .. $sheet->{MaxRow}) {
+           $sheet->{MaxCol} ||= $sheet->{MinCol};
+            next if !$sheet->{MaxiCol};
+           foreach my $col ($sheet->{MinCol} ..  $sheet->{MaxCol}) {
+               my $cell = $sheet->{Cells}[$row][$col];
+               if ($cell) {
+                   printf("( %s , %s ) => %s\n", $row, $col, $cell->{Val});
+               }
+           }
+       }
+   }
+ return 1;
 
     my $version = ViewSpreadsheets::Model::Version->new();
     $version->create(
