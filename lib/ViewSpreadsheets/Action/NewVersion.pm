@@ -53,7 +53,8 @@ sub take_action {
 
     my $fh;
     if ($testfile) { 
-       open $fh, 't/'.$testfile; }
+       open $fh, 't/'.$testfile;
+     }
      else {
        $fh = $self->argument_value('file'); };
 
@@ -71,8 +72,8 @@ sub take_action {
         close FILE;
     };
 
-    my $version = ViewSpreadsheets::Model::Version->new();
-    $version->create(
+   my $version = ViewSpreadsheets::Model::Version->new();
+   $version->create(
         sdomain => $self->argument_value('domain'), 
         start_date => $self->argument_value('start_date'),
         end_date => $self->argument_value('end_date'),
@@ -82,25 +83,32 @@ sub take_action {
 
    my $excel = Spreadsheet::ParseExcel::Workbook->Parse('t/'.$filename);
    foreach my $sheet (@{$excel->{Worksheet}}) {
-       #printf("Sheet: %s\n", $sheet->{Name});
        $sheet->{MaxRow} ||= $sheet->{MinRow};
         next if ! defined $sheet->{MaxRow};
        foreach my $row ($sheet->{MinRow} .. $sheet->{MaxRow}) {
            my $valid_row = 0;
+           my $numval = $sheet->{Cells}[$row][$domain->filedesc->pos_pp -1];
            $valid_row = 1
-             if ($sheet->{Cells}[$row][$domain->filedesc->pos_pp -1] && $sheet->{Cells}[$row][$domain->filedesc->pos_pp -1]->{Val} =~m/^\d/ );
-#            print 'ref: '.$sheet->{Cells}[$row][$domain->filedesc->pos_ref1]->{Val}.' prix: '.$sheet->{Cells}[$row][$domain->filedesc->pos_pp]->{Val}."\n"  if $valid_row; 
-           $spreadsheet->create(
-            ref1 => $sheet->{Cells}[$row][$domain->filedesc->pos_ref1 -1 ]->{Val},
-            plabel => $sheet->{Cells}[$row][$domain->filedesc->pos_plabel -1]->{Val},
-            refplabel => $sheet->{Cells}[$row][$domain->filedesc->pos_refplabel -1]->{Val},
-            pdesc => $sheet->{Cells}[$row][$domain->filedesc->pos_pdesc -1]->{Val},
-            pp => $sheet->{Cells}[$row][$domain->filedesc->pos_pp -1]->{Val},
-            rate => $sheet->{Cells}[$row][$domain->filedesc->pos_rate -1]->{Val},
-            price => $sheet->{Cells}[$row][$domain->filedesc->pos_price -1]->{Val},
-            version => $version->id) if $valid_row;
-            }
-   }
+             if ($numval && $numval->{Val} =~m/^\d/ );
+
+          if ($valid_row) {
+               use encoding 'utf8';
+               my $desc = $sheet->{Cells}[$row][$domain->filedesc->pos_pdesc -1]->{Val}."";
+               my $label = $sheet->{Cells}[$row][$domain->filedesc->pos_plabel -1]->{Val}."";
+    #            print 'ref: '.$sheet->{Cells}[$row][$domain->filedesc->pos_plabel -1]->{Val}.' desc: '.$desc."\n";
+               $spreadsheet->create(
+                ref1 => $sheet->{Cells}[$row][$domain->filedesc->pos_ref1 -1 ]->{Val},
+                plabel => $label,
+                refplabel => $sheet->{Cells}[$row][$domain->filedesc->pos_refplabel -1]->{Val},
+                pdesc => $desc,
+                pp => $sheet->{Cells}[$row][$domain->filedesc->pos_pp -1]->{Val},
+                rate => $sheet->{Cells}[$row][$domain->filedesc->pos_rate -1]->{Val},
+                price => $sheet->{Cells}[$row][$domain->filedesc->pos_price -1]->{Val},
+                version => $version->id
+                );
+               };
+            };
+    };
 
     $self->report_success if not $self->result->failure;
     

@@ -36,5 +36,5 @@ my $spreadCol = ViewSpreadsheets::Model::SpreadsheetCollection->new();
 $spreadCol->limit(column => 'version', value => $Version->id);
 
 while (my $s = $spreadCol->next) {
-    warn $s->price;
+    warn $s->pdesc;
 };
