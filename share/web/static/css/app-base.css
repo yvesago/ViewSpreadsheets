@@ -3,3 +3,18 @@ body {
      background: white;
 }
 
+.fildesc {
+  margin:10px;
+  border-collapse: collapse;
+  border-bottom:hidden;
+}
+
+.filedesc th {
+    font-weight: bold;
+    text-align: center;
+    background-color: #ddd;
+}
+
+.filedesc td {
+    text-align: right;
+}

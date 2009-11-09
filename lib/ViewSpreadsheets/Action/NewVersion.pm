@@ -13,16 +13,9 @@ use base qw/ViewSpreadsheets::Action Jifty::Action/;
 use Jifty::Param::Schema;
 use Jifty::Action schema {
     param domain =>
-        render as 'select',
-        is mandatory,
-        available are defer { 
-            my $col=ViewSpreadsheets::Model::DomainCollection->new; 
-            $col->unlimit; 
-            my @res = ({display => 'novalue', value => 0}); 
-            map {push @res, { display => $_->name, value => $_->id} } @{$col->items_array_ref};
-            \@res;};
+        render as 'hidden';
+        is mandatory;
     param start_date =>
-        is mandatory,
         render as 'DateTime';
     param end_date =>
         render as 'DateTime';

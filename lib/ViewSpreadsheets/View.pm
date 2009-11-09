@@ -11,14 +11,14 @@ foreach my $model ( Jifty->class_loader->models ) {
         $bare_model = $1;
     };
 
-    alias Jifty::View::Declare::CRUD under '/admin/' . $bare_model,
+    alias Jifty::View::Declare::CRUD under '/user/admin/' . $bare_model,
             { object_type => $bare_model };
 
-    template '/admin/'.$bare_model. '-list' => sub {
+    template '/user/admin/'.$bare_model. '-list' => sub {
         form {
             render_region(
                 name => $bare_model . '-list',
-                path => '/admin/' . $bare_model . '/list'
+                path => '/user/admin/' . $bare_model . '/list'
             );
         };
     };
@@ -39,22 +39,90 @@ private template 'menu' => sub {
 
 template '/' => page {
     title is Jifty->config->framework('ApplicationName');
-             hyperlink(label => "Admin",url => '/admin');
+    hyperlink(label => "User",url => '/user');
+    br {};
+    hyperlink(label => "Admin",url => '/user/admin');
 };
 
-template '/admin/crud' => page {
+template '/user' => page {
+    title is 'user page';
+    my $dom = Jifty->web->session->get('Dom');
+    if ($dom) {
+        h2 { $dom->name };
+        outs 'current_version';
+        br {};
+        outs 'search';
+        br {};
+        outs 'file';
+    }
+    else {
+        show '/user/dom';
+    };
+};
+
+template '/user/dom' => sub {
+    h2 { 'Choose domain' };
+    my $col = ViewSpreadsheets::Model::DomainCollection->new();
+    $col->unlimit;
+    while (my $d = $col->next ) {
+         hyperlink ( label => $d->name, url => '/user/dom/'.$d->id );
+         br {};
+    };
+};
+
+=head2 Admin page
+
+=cut
+
+template '/user/admin' => page {
+    title is 'Admin page';
+    my $dom = Jifty->web->session->get('Dom');
+    ($dom) ? h2 { $dom->name } :  show '/user/dom';
+
+    br {};
+    hyperlink(label => "Upload",url => '/user/admin/upload');
+};
+
+template '/user/admin/crud' => page {
         render_region( name => 'crud' );
 };
 
-template '/admin' => page {
-    title is 'admin page';
-    render_region(name => 'new_version', path => '/admin/add_version');
+template '/user/admin/upload' => page {
+    title is 'Upload admin page';
+    my $dom = Jifty->web->session->get('Dom');
+    ($dom) ? h2 { $dom->name } :  show '/user/dom';
+    show '/user/admin/filedesc';
+    br {};
+    render_region(name => 'new_version', path => '/user/admin/add_version');
 };
 
-template '/admin/add_version' => sub {
+private template '/user/admin/filedesc' => sub {
+    my $dom = Jifty->web->session->get('Dom');
+    my $fileDesc = $dom->filedesc;
+    h3 { 'Structure du fichier' };
+    outs 'nom : '; strong {$fileDesc->name };
+    br {};
+    outs 'Position des champs';
+    table { attr { class => 'filedesc' };
+     row {
+        foreach my $label ( Jifty->app_class('Model','FileDesc')->readable_attributes ) {
+            next if $label eq 'id' || $label eq 'name';
+            th { $label };
+        };
+     };
+     row {
+        foreach my $label ( Jifty->app_class('Model','FileDesc')->readable_attributes ) {
+            next if $label eq 'id' || $label eq 'name';
+            cell { $fileDesc->$label };
+        };
+     };
+    };
+};
+
+template '/user/admin/add_version' => sub {
     my $action = new_action(class => 'NewVersion');
     form {
-        render_action($action);
+        render_param($action,'upload');
         form_submit(label => _('Update'));
     };
 };
