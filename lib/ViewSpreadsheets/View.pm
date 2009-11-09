@@ -53,7 +53,20 @@ template '/user' => page {
         h2 { $dom->name };
         outs 'current_version';
         br {};
-        outs 'search';
+        my $search = new_action(class => 'SearchSpreadsheet', moniker => 'search');
+        form {
+            render_param($search,'contains');
+            $search->button(
+                label   => _('Search'),
+                onclick => {
+                    submit  => $search,
+                    refresh => 'filecontent',
+                    args    => { page => 1 }
+                }
+            );
+
+        };
+        render_region(name => 'filecontent', path => '/user/filecontent');
         br {};
         outs 'file';
     }
@@ -96,12 +109,12 @@ template '/user/admin/upload' => page {
     return if (!$dom);
     show '/user/admin/filedesc';
     br {};
-    render_region(name => 'filecontent', path => '/user/admin/filecontent');
+    render_region(name => 'filecontent', path => '/user/filecontent');
     br {};
     render_region(name => 'new_version', path => '/user/admin/add_version');
 };
 
-template '/user/admin/filecontent' => sub {
+template '/user/filecontent' => sub {
     my $version = Jifty->web->session->get('Version');
 
     return if !$version;
@@ -131,8 +144,8 @@ template '/user/admin/filecontent' => sub {
         };
     };
 
-
-    my $FileContent = ViewSpreadsheets::Model::SpreadsheetCollection->new();
+    my $search = ( Jifty->web->response->result('search') ? Jifty->web->response->result('search')->content('search') : undef );
+    my $FileContent = $search || ViewSpreadsheets::Model::SpreadsheetCollection->new();
     $FileContent->limit(column => 'version', value => $version->id);
     $FileContent->order_by(column => $sort_by, order=> $order) if ($sort_by && $order);
 
