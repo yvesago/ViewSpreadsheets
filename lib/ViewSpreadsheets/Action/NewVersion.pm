@@ -49,9 +49,10 @@ sub take_action {
        open $fh, 't/'.$testfile;
      }
      else {
-       $fh = $self->argument_value('file'); };
+       $fh = $self->argument_value('file');
+       };
 
-    my $filename = $testfile || scalar($fh);
+    my $filename = 't/'.$testfile || scalar($fh);
     #warn $filename;
 
     # TODO don't allow same file name
@@ -68,13 +69,14 @@ sub take_action {
    my $version = ViewSpreadsheets::Model::Version->new();
    $version->create(
         sdomain => $self->argument_value('domain'), 
-        start_date => $self->argument_value('start_date'),
-        end_date => $self->argument_value('end_date'),
+      #  start_date => $self->argument_value('start_date'),
+      #  end_date => $self->argument_value('end_date'),
         filename => $filename);
+   Jifty->web->session->set(Version => $version);
 
    my $spreadsheet = ViewSpreadsheets::Model::Spreadsheet->new();
 
-   my $excel = Spreadsheet::ParseExcel::Workbook->Parse('t/'.$filename);
+   my $excel = Spreadsheet::ParseExcel::Workbook->Parse($filename);
    foreach my $sheet (@{$excel->{Worksheet}}) {
        $sheet->{MaxRow} ||= $sheet->{MinRow};
         next if ! defined $sheet->{MaxRow};

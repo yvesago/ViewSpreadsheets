@@ -91,9 +91,94 @@ template '/user/admin/upload' => page {
     title is 'Upload admin page';
     my $dom = Jifty->web->session->get('Dom');
     ($dom) ? h2 { $dom->name } :  show '/user/dom';
+    return if (!$dom);
     show '/user/admin/filedesc';
     br {};
+    render_region(name => 'filecontent', path => '/user/admin/filecontent');
+    br {};
     render_region(name => 'new_version', path => '/user/admin/add_version');
+};
+
+template '/user/admin/filecontent' => sub {
+    my $version = Jifty->web->session->get('Version');
+
+    return if !$version;
+
+    my $page = get('page') || 1;
+    my $sort = get('Sort') || '';
+    my $session_sort = Jifty->web->session->get('Sort') || '';
+    my($sort_by,$order); 
+    
+    if ( $session_sort =~ m/(.*?)-(ASC|DESC)$/) {
+        $sort_by=$1;$order=$2; };
+    
+    if ($sort) {
+        $sort_by = $sort;
+        if (!$order) {
+            $order = 'ASC';
+            Jifty->web->session->set('Sort'=>$sort.'-ASC');
+        } 
+        elsif ( $order eq 'ASC') {
+            $order = 'DESC';
+            Jifty->web->session->set('Sort'=>$sort.'-DESC');
+        }
+        elsif ( $order eq 'DESC') {
+            $order = '';
+            $sort_by = '';
+            Jifty->web->session->set('Sort'=>undef);
+        };
+    };
+
+
+    my $FileContent = ViewSpreadsheets::Model::SpreadsheetCollection->new();
+    $FileContent->limit(column => 'version', value => $version->id);
+    $FileContent->order_by(column => $sort_by, order=> $order) if ($sort_by && $order);
+
+    $FileContent->set_page_info(
+        current_page => $page,
+        per_page => 3,
+    );
+
+    if ($FileContent->pager->last_page > 1) {
+        p { "Page $page of " . $FileContent->pager->last_page }
+    };
+
+    if ($FileContent->pager->previous_page) {
+        hyperlink ( label => '<', onclick => { args => {page => $FileContent->pager->previous_page, Sort => ''} } );
+    };
+    if ($FileContent->pager->next_page) {
+        hyperlink ( label => '>', onclick => { args => {page => $FileContent->pager->next_page, Sort => ''} } );
+    };
+
+    my @fields = qw( ref1 plabel refplabel pdesc pp rate price );
+#    strong {$sort};outs '___'; strong {Jifty->web->session->get('Sort');};
+#    br{};
+#    outs $FileContent->build_select_query;
+    table { attr { class => 'content' };
+        row {
+            foreach my $cell (@fields) {
+                cell {
+                if ( $sort_by && $cell eq $sort_by ) {
+                    strong {hyperlink ( label =>$cell, onclick => { args => {Sort=>$cell}});};
+                    my $img = ($order eq 'ASC')?'up':'down';
+                    img { attr { src => '/img/bullet_arrow_'.$img.'.png' }; };
+                }
+                else {
+                    hyperlink ( label =>$cell, onclick => { args => {Sort=>$cell}});
+                };
+                    };
+            };
+        };
+    while ( my $line = $FileContent->next ) {
+        row {
+            foreach my $cell (@fields) {
+                cell {$line->$cell};
+            };
+        };
+    };
+    };
+
+
 };
 
 private template '/user/admin/filedesc' => sub {
@@ -120,10 +205,27 @@ private template '/user/admin/filedesc' => sub {
 };
 
 template '/user/admin/add_version' => sub {
+    my $version = Jifty->web->session->get('Version');
+    my $dom = Jifty->web->session->get('Dom');
     my $action = new_action(class => 'NewVersion');
     form {
-        render_param($action,'upload');
+        render_param($action,'domain', render_as => 'hidden', default_value =>$dom->id);
+        if (!$version) {
+            render_param($action,'file');
+        }
+        else {
+            render_param($action,'start_date');
+            render_param($action,'end_date');
+        };
         form_submit(label => _('Update'));
+    };
+
+    return if (!$version);
+    my $current_version = ViewSpreadsheets::Model::Version->new();
+    my $delete = new_action(class => 'DeleteVersion');
+    form {
+        render_action($delete);
+        form_submit(label => _('Delete'));
     };
 };
 
