@@ -5,6 +5,8 @@ package ViewSpreadsheets::View;
 use Jifty::View::Declare -base;
 use base qw/ Jifty::View::Declare::CRUD /;
 
+my @fields = qw( ref1 plabel refplabel pdesc pp rate price );
+
 foreach my $model ( Jifty->class_loader->models ) {
     my $bare_model;
     if ( $model =~ /^.*::(.*?)$/ ) {
@@ -136,28 +138,32 @@ template '/user/admin/filecontent' => sub {
 
     $FileContent->set_page_info(
         current_page => $page,
-        per_page => 3,
+        per_page => 5,
     );
 
     if ($FileContent->pager->last_page > 1) {
-        p { "Page $page of " . $FileContent->pager->last_page }
+        div { attr { class => 'nav_content'};
+        hyperlink ( label => '<', onclick => { args => {page => $FileContent->pager->previous_page, Sort => ''} } )
+            if ($FileContent->pager->previous_page);
+            outs '::';
+        for my $p ( 1 .. $FileContent->pager->last_page) {
+        ($p == $page) ? strong { $p } :
+            hyperlink ( label => $p, onclick => { args => {page => $p, Sort => ''} } );
+            outs '::';
+        };
+        hyperlink ( label => '>', onclick => { args => {page => $FileContent->pager->next_page, Sort => ''} } )
+            if ($FileContent->pager->next_page);
+        };
     };
 
-    if ($FileContent->pager->previous_page) {
-        hyperlink ( label => '<', onclick => { args => {page => $FileContent->pager->previous_page, Sort => ''} } );
-    };
-    if ($FileContent->pager->next_page) {
-        hyperlink ( label => '>', onclick => { args => {page => $FileContent->pager->next_page, Sort => ''} } );
-    };
 
-    my @fields = qw( ref1 plabel refplabel pdesc pp rate price );
 #    strong {$sort};outs '___'; strong {Jifty->web->session->get('Sort');};
 #    br{};
 #    outs $FileContent->build_select_query;
     table { attr { class => 'content' };
         row {
             foreach my $cell (@fields) {
-                cell {
+                th {
                 if ( $sort_by && $cell eq $sort_by ) {
                     strong {hyperlink ( label =>$cell, onclick => { args => {Sort=>$cell}});};
                     my $img = ($order eq 'ASC')?'up':'down';
@@ -169,10 +175,12 @@ template '/user/admin/filecontent' => sub {
                     };
             };
         };
+    my $i=0;
     while ( my $line = $FileContent->next ) {
+        $i++;
         row {
             foreach my $cell (@fields) {
-                cell {$line->$cell};
+                cell { attr { class => 'l'.$i%2}; outs $line->$cell};
             };
         };
     };
@@ -190,15 +198,14 @@ private template '/user/admin/filedesc' => sub {
     outs 'Position des champs';
     table { attr { class => 'filedesc' };
      row {
-        foreach my $label ( Jifty->app_class('Model','FileDesc')->readable_attributes ) {
-            next if $label eq 'id' || $label eq 'name';
+        foreach my $label ( @fields ) {
             th { $label };
         };
      };
      row {
-        foreach my $label ( Jifty->app_class('Model','FileDesc')->readable_attributes ) {
-            next if $label eq 'id' || $label eq 'name';
-            cell { $fileDesc->$label };
+        foreach my $label ( @fields ) {
+            my $pos = 'pos_'.$label;
+            cell { $fileDesc->$pos };
         };
      };
     };
@@ -217,7 +224,7 @@ template '/user/admin/add_version' => sub {
             render_param($action,'start_date');
             render_param($action,'end_date');
         };
-        form_submit(label => _('Update'));
+        form_submit(label => _('Save'));
     };
 
     return if (!$version);

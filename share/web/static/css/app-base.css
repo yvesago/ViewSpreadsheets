@@ -18,3 +18,20 @@ body {
 .filedesc td {
     text-align: right;
 }
+
+.nav_content a, .content a {
+   text-decoration: none;
+}
+
+.content th {
+    text-align: center;
+    background-color: #ddd;
+}
+
+.content img {
+    vertical-align:text-bottom;
+}
+
+.l1 {
+    background-color: #f1f6ff;
+}
