@@ -32,6 +32,7 @@ use Jifty::Action schema {
 =cut
 
 use Spreadsheet::ParseExcel;
+use Encode;
 
 sub take_action {
     my $self = shift;
@@ -87,9 +88,8 @@ sub take_action {
              if ($numval && $numval->{Val} =~m/^\d/ );
 
           if ($valid_row) {
-               use encoding 'utf8';
-               my $desc = $sheet->{Cells}[$row][$domain->filedesc->pos_pdesc -1]->{Val}."";
-               my $label = $sheet->{Cells}[$row][$domain->filedesc->pos_plabel -1]->{Val}."";
+               my $desc = encode('utf8',$sheet->{Cells}[$row][$domain->filedesc->pos_pdesc -1]->{Val});
+               my $label = encode('utf8',$sheet->{Cells}[$row][$domain->filedesc->pos_plabel -1]->{Val});
     #            print 'ref: '.$sheet->{Cells}[$row][$domain->filedesc->pos_plabel -1]->{Val}.' desc: '.$desc."\n";
                $spreadsheet->create(
                 ref1 => $sheet->{Cells}[$row][$domain->filedesc->pos_ref1 -1 ]->{Val},
