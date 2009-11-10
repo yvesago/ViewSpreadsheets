@@ -7,6 +7,8 @@ use base qw/ Jifty::View::Declare::CRUD /;
 
 my @fields = qw( ref1 plabel refplabel pdesc pp rate price );
 
+my $lang = Jifty::I18N->get_current_language;Jifty::DateTime->DefaultLocale($lang);
+
 foreach my $model ( Jifty->class_loader->models ) {
     my $bare_model;
     if ( $model =~ /^.*::(.*?)$/ ) {
@@ -94,6 +96,7 @@ template '/user/dom' => sub {
     };
 };
 
+
 template '/user/version' => sub {
     my $dom = Jifty->web->session->get('Dom');
     return if (!$dom);
@@ -102,7 +105,7 @@ template '/user/version' => sub {
     $col->limit(column => 'sdomain', value => $dom->id) ;
     $col->limit(column => 'start_date', value => undef, operator => 'not') ;
     while (my $v = $col->next ) {
-         hyperlink ( label => $v->start_date, url => '/user/version/'.$v->id );
+         hyperlink ( label => $v->start_date->strftime("%a %d %b %Y %H:%M:%S"), url => '/user/version/'.$v->id );
          br {};
     };
 };
@@ -264,7 +267,7 @@ template '/user/admin/add_version' => sub {
             strong {'Ajoutez une date de début pour valider ce fichier'};
             render_param($action,'update_id', render_as => 'hidden', default_value =>$version->id);
             render_param($action,'start_date');
-            render_param($action,'end_date');
+            #render_param($action,'end_date');
             form_submit(label => 'Valider');
         };
     };

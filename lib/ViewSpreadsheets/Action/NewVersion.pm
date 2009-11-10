@@ -16,10 +16,12 @@ use Jifty::Action schema {
         render as 'hidden';
         is mandatory;
     param start_date =>
+        label is 'Date de début',
         render as 'DateTime';
     param end_date =>
         render as 'DateTime';
     param file =>
+        label is 'Fichier',
         render as 'Upload';
     param update_id =>
         render as 'hidden';
@@ -55,11 +57,16 @@ sub take_action {
         $update_version->load($version_id);
         if ( $update_version->id ) {
             if ( not $self->argument_value('start_date') ) {
+                $self->validation_error( start_date => 'valeur obligatoire' );
+                return 0;
+            };
+            if ($self->argument_value('start_date') !~ m/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/) {
+                $self->validation_error( start_date => 'Format de date faux ou incomplet' );
                 return 0;
             };
             $update_version->set_start_date( $self->argument_value('start_date') );
-            $update_version->set_end_date ( $self->argument_value('end_date') )
-                if $self->argument_value('end_date');
+            #$update_version->set_end_date ( $self->argument_value('end_date') )
+            #    if $self->argument_value('end_date');
             $self->result->message('Fichier validé.') if not $self->result->failure;
             Jifty->web->session->set(Version => undef);
             Jifty->web->tangent( url => '/user/admin');
