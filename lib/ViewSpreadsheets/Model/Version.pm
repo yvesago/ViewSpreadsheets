@@ -34,6 +34,8 @@ sub before_delete {
 
     # clear session
     Jifty->web->session->set('Version' => undef);
+
+    return 1;
 };
 
 =head2 current_user_can

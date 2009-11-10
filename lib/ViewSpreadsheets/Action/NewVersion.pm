@@ -53,7 +53,8 @@ sub take_action {
        $fh = $self->argument_value('file');
        };
 
-    my $filename = 't/'.$testfile || scalar($fh);
+    my $filename = $testfile || scalar($fh);
+    my $destdir = ($testfile)? 't/':Jifty::Util->app_root().'/share/web/static/files/';
     #warn $filename;
 
     # TODO don't allow same file name
@@ -62,7 +63,7 @@ sub take_action {
         local $/;
         binmode $fh;
         # TODO: choose destination dir
-        open FILE, '>', $filename;
+        open FILE, '>', $destdir.$filename;
         print FILE <$fh>;
         close FILE;
     };
@@ -77,7 +78,7 @@ sub take_action {
 
    my $spreadsheet = ViewSpreadsheets::Model::Spreadsheet->new();
 
-   my $excel = Spreadsheet::ParseExcel::Workbook->Parse($filename);
+   my $excel = Spreadsheet::ParseExcel::Workbook->Parse($destdir.$filename);
    foreach my $sheet (@{$excel->{Worksheet}}) {
        $sheet->{MaxRow} ||= $sheet->{MinRow};
         next if ! defined $sheet->{MaxRow};
@@ -117,7 +118,7 @@ sub take_action {
 sub report_success {
     my $self = shift;
     # Your success message here
-    $self->result->message('Success');
+    $self->result->message('Fichier importé. Ajoutez une date de début si l\'import est valide.');
 };
 
 1;
