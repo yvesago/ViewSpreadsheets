@@ -23,14 +23,14 @@ before '/user*' => run {
             Jifty->web->tangent(url => '/caslogout');
           };
     my $top = Jifty->web->navigation;
-    my $admin_nav = $top->child( 'Admin' => url => '/user/admin' );
-        $admin_nav->child('Upload' => url => '/user/admin/upload' );
     my $sub_nav = $top->child( _('User') => url => '/user' );
     my $col = ViewSpreadsheets::Model::DomainCollection->new();
        $col->unlimit;
     while (my $d = $col->next ) {
         $sub_nav->child( $d->name => url =>  '/user/dom/'.$d->id);
     };
+    my $admin_nav = $top->child( 'Admin' => url => '/user/admin' );
+        $admin_nav->child('Upload' => url => '/user/admin/upload' );
 };
 
 before qr '/user/dom/(\d+)' => run {
