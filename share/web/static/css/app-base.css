@@ -36,3 +36,16 @@ body {
     background-color: #f1f6ff;
 }
 
+.ui-timepickr span {
+    border:0;
+    color:#ccc;
+    background:#333;
+    font-weight:bold;
+    border:1px solid #555;
+}
+.ui-timepickr span:hover {
+    color:#eee;
+    background:#333;
+    border:1px solid #777;
+}
+
