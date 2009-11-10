@@ -258,8 +258,8 @@ template '/user/admin/add_version' => sub {
     };
 
     return if (!$version);
-    my $current_version = ViewSpreadsheets::Model::Version->new();
-    my $delete = new_action(class => 'DeleteVersion');
+
+    my $delete = new_action(class => 'DeleteVersion', record => $version->id);
     form {
         render_action($delete);
         form_submit(label => _('Delete'));
