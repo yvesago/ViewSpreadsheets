@@ -41,6 +41,14 @@ before qr '/user/dom/(\d+)' => run {
     dispatch '/user';
 };
 
+before qr '/user/version/(\d+)' => run {
+    my $ver_id = $1;
+    my $version = ViewSpreadsheets::Model::Version->new();
+    $version->load($ver_id);
+    Jifty->web->session->set(Version => $version) if $version->id;
+    dispatch '/user';
+};
+
 before '/user/admin*' => run  {
 
    unless(Jifty->web->current_user->group eq 'admin' || Jifty->web->current_user->group eq 'reader' ) {

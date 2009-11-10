@@ -49,9 +49,17 @@ template '/' => page {
 template '/user' => page {
     title is 'user page';
     my $dom = Jifty->web->session->get('Dom');
+    my $version = Jifty->web->session->get('Version');
+    if (!$version) {
+        show '/user/version';
+        return;
+    };
     if ($dom) {
         h2 { $dom->name };
         outs 'current_version';
+        br {};
+        strong { 'Télécharger : ' }; hyperlink(label =>  $version->filename, url => '/files/'. $version->filename);
+        br {};
         br {};
         my $search = new_action(class => 'SearchSpreadsheet', moniker => 'search');
         form {
@@ -66,9 +74,8 @@ template '/user' => page {
             );
 
         };
-        render_region(name => 'filecontent', path => '/user/filecontent');
         br {};
-        outs 'file';
+        render_region(name => 'filecontent', path => '/user/filecontent');
     }
     else {
         show '/user/dom';
@@ -81,6 +88,16 @@ template '/user/dom' => sub {
     $col->unlimit;
     while (my $d = $col->next ) {
          hyperlink ( label => $d->name, url => '/user/dom/'.$d->id );
+         br {};
+    };
+};
+
+template '/user/version' => sub {
+    h2 { 'Choose Version' };
+    my $col = ViewSpreadsheets::Model::VersionCollection->new();
+    $col->limit(column => 'start_date', value => undef, operator => 'not') ;
+    while (my $v = $col->next ) {
+         hyperlink ( label => $v->start_date, url => '/user/version/'.$v->id );
          br {};
     };
 };
