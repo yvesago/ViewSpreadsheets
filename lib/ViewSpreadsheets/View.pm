@@ -56,7 +56,7 @@ template '/user' => page {
     };
     if ($dom) {
         h2 { $dom->name };
-        outs 'current_version';
+        strong { 'Version : '}; outs ( $version->start_date || 'Test');
         br {};
         strong { 'Télécharger : ' }; hyperlink(label =>  $version->filename, url => '/files/'. $version->filename);
         br {};
@@ -259,7 +259,7 @@ template '/user/admin/add_version' => sub {
 
     return if (!$version);
 
-    my $delete = new_action(class => 'DeleteVersion', record => $version->id);
+    my $delete = new_action(class => 'DeleteVersion', record => $version);
     form {
         render_action($delete);
         form_submit(label => _('Delete'));
