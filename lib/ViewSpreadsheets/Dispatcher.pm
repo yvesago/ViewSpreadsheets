@@ -37,6 +37,7 @@ before qr '/user/dom/(\d+)' => run {
     my $dom_id = $1;
     my $dom = ViewSpreadsheets::Model::Domain->new();
     $dom->load($dom_id);
+    Jifty->web->session->set(Version => undef);
     Jifty->web->session->set(Dom => $dom) if $dom->id;
     dispatch '/user';
 };

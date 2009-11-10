@@ -21,10 +21,11 @@ use Jifty::Action schema {
         render as 'DateTime';
     param file =>
         render as 'Upload';
+    param update_id =>
+        render as 'hidden';
     # testfile is only used with unit tests
     param 'testfile' =>
         render as 'hidden';
-
 };
 
 =head2 take_action
@@ -38,13 +39,39 @@ sub take_action {
     my $self = shift;
    
     my $domid = $self->argument_value('domain');
-    # TODO: return error if 0
+    return 0 if (!$domid);
+
     my $domain = ViewSpreadsheets::Model::Domain->new();
     $domain->load($domid);
 
     # TODO: vrfy name or use a static namefile
     my $testfile = $self->argument_value('testfile') || 0;
 
+    #################################
+    # validate file with a start_date
+    my $version_id = $self->argument_value('update_id') || 0;
+    if ($version_id) {
+        my $update_version = ViewSpreadsheets::Model::Version->new();
+        $update_version->load($version_id);
+        if ( $update_version->id ) {
+            if ( not $self->argument_value('start_date') ) {
+                return 0;
+            };
+            $update_version->set_start_date( $self->argument_value('start_date') );
+            $update_version->set_end_date ( $self->argument_value('end_date') )
+                if $self->argument_value('end_date');
+            $self->result->message('Fichier validé.') if not $self->result->failure;
+            Jifty->web->session->set(Version => undef);
+            Jifty->web->tangent( url => '/user/admin');
+            return 1;
+        }
+        else {
+            return 0;
+        };
+    };
+
+    #####################
+    # Load file
     my $fh;
     if ($testfile) { 
        open $fh, 't/'.$testfile;
@@ -54,28 +81,28 @@ sub take_action {
        };
 
     my $filename = $testfile || scalar($fh);
-    my $destdir = ($testfile)? 't/':Jifty::Util->app_root().'/share/web/static/files/';
-    #warn $filename;
+    # TODO clean file name : ascii char, no white space
 
-    # TODO don't allow same file name
+    my $destdir = ($testfile)? 't/':Jifty::Util->app_root().'/share/web/static/files/';
+
+    # TODO don't allow same file name (??)
 
     if (!$testfile) {
         local $/;
         binmode $fh;
-        # TODO: choose destination dir
         open FILE, '>', $destdir.$filename;
         print FILE <$fh>;
         close FILE;
     };
 
    my $version = ViewSpreadsheets::Model::Version->new();
+   # a version whithout start_date is a test
    $version->create(
         sdomain => $self->argument_value('domain'), 
-      #  start_date => $self->argument_value('start_date'),
-      #  end_date => $self->argument_value('end_date'),
         filename => $filename);
    Jifty->web->session->set(Version => $version);
 
+   # Read spreadsheet
    my $spreadsheet = ViewSpreadsheets::Model::Spreadsheet->new();
 
    my $excel = Spreadsheet::ParseExcel::Workbook->Parse($destdir.$filename);

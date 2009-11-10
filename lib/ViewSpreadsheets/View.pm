@@ -49,13 +49,13 @@ template '/' => page {
 template '/user' => page {
     title is 'user page';
     my $dom = Jifty->web->session->get('Dom');
+    ($dom) ? h2 { $dom->name } :  show '/user/dom';
     my $version = Jifty->web->session->get('Version');
     if (!$version) {
         show '/user/version';
         return;
     };
     if ($dom) {
-        h2 { $dom->name };
         strong { 'Version : '}; outs ( $version->start_date || 'Test');
         br {};
         strong { 'Télécharger : ' }; hyperlink(label =>  $version->filename, url => '/files/'. $version->filename);
@@ -93,8 +93,10 @@ template '/user/dom' => sub {
 };
 
 template '/user/version' => sub {
-    h2 { 'Choose Version' };
+    h3 { 'Versions disponibles' };
+    my $dom = Jifty->web->session->get('Dom');
     my $col = ViewSpreadsheets::Model::VersionCollection->new();
+    $col->limit(column => 'sdomain', value => $dom->id) ;
     $col->limit(column => 'start_date', value => undef, operator => 'not') ;
     while (my $v = $col->next ) {
          hyperlink ( label => $v->start_date, url => '/user/version/'.$v->id );
@@ -110,7 +112,7 @@ template '/user/admin' => page {
     title is 'Admin page';
     my $dom = Jifty->web->session->get('Dom');
     ($dom) ? h2 { $dom->name } :  show '/user/dom';
-
+    show '/user/version';
     br {};
     hyperlink(label => "Upload",url => '/user/admin/upload');
 };
@@ -124,6 +126,9 @@ template '/user/admin/upload' => page {
     my $dom = Jifty->web->session->get('Dom');
     ($dom) ? h2 { $dom->name } :  show '/user/dom';
     return if (!$dom);
+    my $version = Jifty->web->session->get('Version');
+    Jifty->web->session->set('Version' => undef)
+        if ($version && $version->start_date);
     show '/user/admin/filedesc';
     br {};
     render_region(name => 'filecontent', path => '/user/filecontent');
@@ -223,7 +228,7 @@ private template '/user/admin/filedesc' => sub {
     my $dom = Jifty->web->session->get('Dom');
     my $fileDesc = $dom->filedesc;
     h3 { 'Structure du fichier' };
-    outs 'nom : '; strong {$fileDesc->name };
+    outs 'Type : '; strong {$fileDesc->name };
     br {};
     outs 'Position des champs';
     table { attr { class => 'filedesc' };
@@ -249,12 +254,15 @@ template '/user/admin/add_version' => sub {
         render_param($action,'domain', render_as => 'hidden', default_value =>$dom->id);
         if (!$version) {
             render_param($action,'file');
+            form_submit(label => _('Save'));
         }
         else {
+            strong {'Ajoutez une date de début pour valider ce fichier'};
+            render_param($action,'update_id', render_as => 'hidden', default_value =>$version->id);
             render_param($action,'start_date');
             render_param($action,'end_date');
+            form_submit(label => 'Valider');
         };
-        form_submit(label => _('Save'));
     };
 
     return if (!$version);
