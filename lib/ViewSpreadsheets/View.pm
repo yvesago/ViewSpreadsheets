@@ -197,15 +197,16 @@ template '/user/filecontent' => sub {
 #    outs $FileContent->build_select_query;
     table { attr { class => 'content' };
         row {
+            my $smodel_action=new_action(class => 'CreateSpreadsheet');
             foreach my $cell (@fields) {
                 th {
                 if ( $sort_by && $cell eq $sort_by ) {
-                    strong {hyperlink ( label =>$cell, onclick => { args => {Sort=>$cell}});};
+                    strong {hyperlink ( label =>$smodel_action->form_field($cell)->label, onclick => { args => {Sort=>$cell}});};
                     my $img = ($order eq 'ASC')?'up':'down';
                     img { attr { src => '/img/bullet_arrow_'.$img.'.png' }; };
                 }
                 else {
-                    hyperlink ( label =>$cell, onclick => { args => {Sort=>$cell}});
+                    hyperlink ( label =>$smodel_action->form_field($cell)->label, onclick => { args => {Sort=>$cell}});
                 };
                     };
             };
