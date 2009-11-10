@@ -18,10 +18,13 @@ use ViewSpreadsheets::Record schema {
         render as 'textarea',
         type is 'text';    
     column 'pp' =>
+        type is 'float',
         label is 'Prix public';
     column 'rate' =>
+        type is 'float',
         label is 'Remise';
     column 'price' =>
+        type is 'float',
         label is 'Prix';
 };
 

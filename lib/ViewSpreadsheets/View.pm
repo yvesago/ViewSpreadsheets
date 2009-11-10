@@ -63,7 +63,9 @@ template '/user' => page {
         br {};
         my $search = new_action(class => 'SearchSpreadsheet', moniker => 'search');
         form {
+            #render_action($search);
             render_param($search,'contains');
+            render_param($search,'price_dwim');
             $search->button(
                 label   => _('Search'),
                 onclick => {
@@ -93,8 +95,9 @@ template '/user/dom' => sub {
 };
 
 template '/user/version' => sub {
-    h3 { 'Versions disponibles' };
     my $dom = Jifty->web->session->get('Dom');
+    return if (!$dom);
+    h3 { 'Versions disponibles' };
     my $col = ViewSpreadsheets::Model::VersionCollection->new();
     $col->limit(column => 'sdomain', value => $dom->id) ;
     $col->limit(column => 'start_date', value => undef, operator => 'not') ;
@@ -112,7 +115,7 @@ template '/user/admin' => page {
     title is 'Admin page';
     my $dom = Jifty->web->session->get('Dom');
     ($dom) ? h2 { $dom->name } :  show '/user/dom';
-    show '/user/version';
+    show '/user/version' if $dom;
     br {};
     hyperlink(label => "Upload",url => '/user/admin/upload');
 };
