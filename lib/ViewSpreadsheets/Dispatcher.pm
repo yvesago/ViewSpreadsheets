@@ -29,8 +29,6 @@ before '/user*' => run {
     while (my $d = $col->next ) {
         $sub_nav->child( $d->name => url =>  '/user/dom/'.$d->id);
     };
-    my $admin_nav = $top->child( 'Admin' => url => '/user/admin' );
-        $admin_nav->child('Upload' => url => '/user/admin/upload' );
 };
 
 before qr '/user/dom/(\d+)' => run {
@@ -39,7 +37,7 @@ before qr '/user/dom/(\d+)' => run {
     $dom->load($dom_id);
     Jifty->web->session->set(Version => undef);
     Jifty->web->session->set(Dom => $dom) if $dom->id;
-    dispatch '/user';
+    tangent '/user';
 };
 
 before qr '/user/version/(\d+)' => run {
@@ -47,7 +45,7 @@ before qr '/user/version/(\d+)' => run {
     my $version = ViewSpreadsheets::Model::Version->new();
     $version->load($ver_id);
     Jifty->web->session->set(Version => $version) if $version->id;
-    dispatch '/user';
+    tangent '/user';
 };
 
 before '/user/admin*' => run  {

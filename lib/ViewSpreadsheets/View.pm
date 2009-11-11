@@ -52,35 +52,45 @@ template '/user' => page {
     my $dom = Jifty->web->session->get('Dom');
     my $version = Jifty->web->session->get('Version');
     if ($dom) {
-        #h2 { show '/user/dom_menu'; outs $dom->name; }; 
         title is $dom->name;  
-        #br {};
-        show '/user/version_menu';
     }
     else {  show '/user/dom'; };
-    return if (!$version); 
-    strong { 'Version : '}; outs ( $version->start_date->strftime("%a %d %b %Y %H:%M:%S") || 'Test');
-    br {};
-    strong { 'Télécharger : ' }; hyperlink(label =>  $version->filename, url => '/files/'. $version->filename);
-    br {};
-    br {};
-    my $search = new_action(class => 'SearchSpreadsheet', moniker => 'search');
-    form {
-        #render_action($search);
-        render_param($search,'contains');
-        render_param($search,'price_dwim');
-        $search->button(
-            label   => _('Search'),
-            onclick => {
-                submit  => $search,
-                refresh => 'filecontent',
-                args    => { page => 1 }
-            }
-        );
-
+    
+    div { attr { class => 'leftcol' };
+        if ($version) {
+          strong { 'Version : '};
+          outs ( $version->start_date->strftime("%a %d %b %Y %H:%M:%S") || 'Test');
+        };
+        show '/user/version_menu';
+        br{};
+        if ( Jifty->web->current_user->group eq 'admin' ) {
+            br{};
+            br{};
+            hyperlink(label => "Upload",url => '/user/admin/upload');
+        };
     };
-    br {};
-    render_region(name => 'filecontent', path => '/user/filecontent');
+    div { attr { class => 'rightcol' };
+        strong { 'Télécharger : ' }; hyperlink(label =>  $version->filename, url => '/files/'. $version->filename);
+        br {};
+        br {};
+        my $search = new_action(class => 'SearchSpreadsheet', moniker => 'search');
+        form {
+            #render_action($search);
+            render_param($search,'contains');
+            render_param($search,'price_dwim');
+            $search->button(
+                label   => _('Search'),
+                onclick => {
+                    submit  => $search,
+                    refresh => 'filecontent',
+                    args    => { page => 1 }
+                }
+            );
+
+        };
+        br {};
+        render_region(name => 'filecontent', path => '/user/filecontent');
+    } if ($version);
 };
 
 template '/user/dom' => sub {
@@ -94,6 +104,8 @@ template '/user/dom' => sub {
 };
 
 template '/user/dom_menu' => sub {
+    my $self = shift;
+    my $from = shift;
     my $top = Jifty->web->{navigation} = Jifty::Web::Menu->new( label => 'Domaines' );
     my $col = ViewSpreadsheets::Model::DomainCollection->new();
     $col->unlimit;
@@ -162,15 +174,19 @@ template '/user/admin/upload' => page {
     my $dom = Jifty->web->session->get('Dom');
     #return if (!$dom);
     title is 'Upload '.$dom->name;
-    show '/user/dom_menu'; br {}; br {};
     my $version = Jifty->web->session->get('Version');
     Jifty->web->session->set('Version' => undef)
         if ($version && $version->start_date);
-    show '/user/admin/filedesc';
-    br {};
-    render_region(name => 'filecontent', path => '/user/filecontent');
-    br {};
-    render_region(name => 'new_version', path => '/user/admin/add_version');
+    div { attr { class => 'leftcol' };
+        show '/user/dom_menu';
+    };
+    div { attr { class => 'rightcol' };
+        show '/user/admin/filedesc';
+        br {};
+        render_region(name => 'filecontent', path => '/user/filecontent');
+        br {};
+        render_region(name => 'new_version', path => '/user/admin/add_version');
+    };
 };
 
 template '/user/filecontent' => sub {

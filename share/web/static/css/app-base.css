@@ -3,6 +3,18 @@ body {
      background: white;
 }
 
+.leftcol {
+  float: left;
+  width: 20%;
+  margin-right: 1em;
+  clear;
+}
+
+.rightcol {
+  float: left;
+  width: 70%;
+}
+
 .fildesc {
   margin:10px;
   border-collapse: collapse;
