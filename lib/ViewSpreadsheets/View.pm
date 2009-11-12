@@ -173,6 +173,23 @@ template '/user/admin/crud' => page {
         render_region( name => 'crud' );
 };
 
+template '/user/admin/offer' => page {
+    my $dom = Jifty->web->session->get('Dom');
+    title is 'Offre promotionnelle pour '.$dom->name;
+    div { attr { class => 'leftcol' };
+        show '/user/dom_menu';
+        br {};
+        br {};
+    };
+    div { attr { class => 'rightcol' };
+        my $action = new_action(class => 'NewOffer');
+        form {
+            render_action($action);
+                form_submit(label => _('Save'));
+            };
+    };
+};
+
 template '/user/admin/upload' => page {
     my $dom = Jifty->web->session->get('Dom');
     #return if (!$dom);

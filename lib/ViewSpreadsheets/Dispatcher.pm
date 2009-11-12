@@ -32,6 +32,7 @@ before '/user*' => run {
     if (Jifty->web->current_user->group eq 'admin') {
         my $admin_nav = $top->child( 'Admin' => url => '/user/admin/upload' );
         $admin_nav->child( 'Upload' => url =>  '/user/admin/upload');
+        $admin_nav->child( 'Offre' => url =>  '/user/admin/offer');
         my $sub_admin = $admin_nav->child('<b>Tables</b>' => url =>  undef);
         foreach my $model ( Jifty->class_loader->models ) {
            my $bare_model;
