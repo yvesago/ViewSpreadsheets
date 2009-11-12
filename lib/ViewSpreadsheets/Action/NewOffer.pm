@@ -54,8 +54,6 @@ sub take_action {
 
     my $destdir = Jifty::Util->app_root().'/share/web/static/files/';
 
-    # TODO don't allow same file name (??)
-
         local $/;
         binmode $fh;
         open FILE, '>', $destdir.$filename;
@@ -70,7 +68,8 @@ sub take_action {
         end_date => $self->argument_value('end_date'), 
         msg => $self->argument_value('msg')
         );
-   Jifty->web->tangent( url => '/user');
+
+   Jifty->web->next_page('/user');
 
    # a version whithout start_date is a test
     

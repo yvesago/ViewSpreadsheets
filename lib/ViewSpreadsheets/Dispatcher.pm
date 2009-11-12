@@ -67,10 +67,15 @@ before qr '/user/version/(\d+)' => run {
 };
 
 before '/user/admin*' => run  {
-
    unless(Jifty->web->current_user->group eq 'admin' || Jifty->web->current_user->group eq 'reader' ) {
             Jifty->web->tangent(url => '/accessdenied');
           };
+
+    my $dom = Jifty->web->session->get('Dom');
+
+    unless ( $dom ) {
+      tangent '/user';
+    };
 
 };
 
