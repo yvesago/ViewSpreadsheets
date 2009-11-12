@@ -5,7 +5,7 @@ package ViewSpreadsheets::View;
 use Jifty::View::Declare -base;
 use base qw/ Jifty::View::Declare::CRUD /;
 
-my @fields = qw( ref1 plabel refplabel pdesc pp rate price );
+my @fields = qw( ref1 ref2 text1 text2 pp rate price );
 
 my $lang = Jifty::I18N->get_current_language || 'fr'; Jifty::DateTime->DefaultLocale($lang);
 
@@ -48,8 +48,12 @@ template '/' => page {
     h2 {'TODO'};
     ul {
         li { 'limiter personnels ?' };
-        li { 'offre spéciales?' };
-        li { 'Messages avec gestion dynamique ?' };
+        li { 'Messages avec gestion dynamique par domaine' };
+        li { 'Messages page publique' };
+        li { 'Offres promotionnelles' };
+        li { 'date de fin dernier domaine '};
+        li { 'recherches par date'};
+        li { 'numéro de ligne excel' };
     };
 };
 
@@ -80,7 +84,7 @@ template '/user' => page {
 };
 
 template '/user/dom' => sub {
-    h2 { 'Choose domain' };
+    h2 { 'Choisissez un lot :' };
     my $col = ViewSpreadsheets::Model::DomainCollection->new();
     $col->unlimit;
     while (my $d = $col->next ) {
@@ -249,7 +253,7 @@ template '/user/filecontent' => sub {
 
     $FileContent->set_page_info(
         current_page => $page,
-        per_page => 5,
+        per_page => 30,
     );
 
     show '/user/file_search';

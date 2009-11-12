@@ -9,11 +9,13 @@ use ViewSpreadsheets::Record schema {
         is mandatory;
     column pos_ref1 =>
         type is 'int';
-    column pos_plabel =>
+    column pos_ref2 =>
         type is 'int';
-    column pos_refplabel =>
+    column pos_text1 =>
+        label is 'position label',
         type is 'int';
-    column pos_pdesc =>
+    column pos_text2 =>
+        label is 'position desc',
         type is 'int';    
     column pos_pp =>
         type is 'int';

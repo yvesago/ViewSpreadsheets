@@ -123,14 +123,15 @@ sub take_action {
              if ($numval && $numval->{Val} =~m/^\d/ );
 
           if ($valid_row) {
-               my $desc = encode('utf8',$sheet->{Cells}[$row][$domain->filedesc->pos_pdesc -1]->{Val});
-               my $label = encode('utf8',$sheet->{Cells}[$row][$domain->filedesc->pos_plabel -1]->{Val});
-    #            print 'ref: '.$sheet->{Cells}[$row][$domain->filedesc->pos_plabel -1]->{Val}.' desc: '.$desc."\n";
+               my $text1 = encode('utf8',$sheet->{Cells}[$row][$domain->filedesc->pos_text1 -1]->{Val});
+               my $text2 = encode('utf8',$sheet->{Cells}[$row][$domain->filedesc->pos_text2 -1]->{Val});
+               my $ref1 = $sheet->{Cells}[$row][$domain->filedesc->pos_ref1 -1 ]->{Val}
+                            if $domain->filedesc->pos_ref1;
+               my $ref2 = $sheet->{Cells}[$row][$domain->filedesc->pos_ref2 -1 ]->{Val}
+                            if $domain->filedesc->pos_ref2;
                $spreadsheet->create(
-                ref1 => $sheet->{Cells}[$row][$domain->filedesc->pos_ref1 -1 ]->{Val},
-                plabel => $label,
-                refplabel => $sheet->{Cells}[$row][$domain->filedesc->pos_refplabel -1]->{Val},
-                pdesc => $desc,
+                ref1 => $ref1, ref2 => $text2,
+                text1 => $text1, text2 => $text2,
                 pp => $sheet->{Cells}[$row][$domain->filedesc->pos_pp -1]->{Val},
                 rate => $sheet->{Cells}[$row][$domain->filedesc->pos_rate -1]->{Val},
                 price => $sheet->{Cells}[$row][$domain->filedesc->pos_price -1]->{Val},

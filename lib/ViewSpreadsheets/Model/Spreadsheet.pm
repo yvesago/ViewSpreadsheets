@@ -9,13 +9,12 @@ use ViewSpreadsheets::Record schema {
         refers_to ViewSpreadsheets::Model::Version;
     column 'ref1' =>
         label is 'Réf. 1';
-    column 'plabel' =>
-        label is 'Label';
-    column 'refplabel' =>
+    column 'ref2' =>
         label is 'Réf. 2';
-    column 'pdesc' =>
-        label is 'Description',
-        render as 'textarea',
+    column 'text1' =>
+        label is 'Texte 1';
+    column 'text2' =>
+        label is 'Texte 2',
         type is 'text';    
     column 'pp' =>
         type is 'float',
