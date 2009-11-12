@@ -5,8 +5,6 @@ package ViewSpreadsheets::View;
 use Jifty::View::Declare -base;
 use base qw/ Jifty::View::Declare::CRUD /;
 
-my @fields = qw( ref1 ref2 text1 text2 pp rate price );
-
 my $lang = Jifty::I18N->get_current_language || 'fr'; Jifty::DateTime->DefaultLocale($lang);
 
 foreach my $model ( Jifty->class_loader->models ) {
@@ -47,13 +45,15 @@ template '/' => page {
     br {};
     h2 {'TODO'};
     ul {
-        li { 'limiter personnels ?' };
+        li { 'limiter personnels' };
         li { 'Messages avec gestion dynamique par domaine' };
         li { 'Messages page publique' };
         li { 'Offres promotionnelles' };
         li { 'date de fin dernier domaine '};
         li { 'recherches par date'};
-        li { 'numéro de ligne excel' };
+        li { 'nettoyage nom de fichier'};
+        li { strike{'numéro de ligne excel'}; };
+        li { strike{'tri des colones par ordre d\'origine'}; };
     };
 };
 
@@ -281,7 +281,7 @@ template '/user/filecontent' => sub {
     table { attr { class => 'content' };
         row {
             my $smodel_action=new_action(class => 'CreateSpreadsheet');
-            foreach my $cell (@fields) {
+            foreach my $cell ($version->sdomain->show_fields()) {
                 th {
                 if ( $sort_by && $cell eq $sort_by ) {
                     strong {hyperlink ( label =>$smodel_action->form_field($cell)->label, onclick => { args => {Sort=>$cell}});};
@@ -298,7 +298,7 @@ template '/user/filecontent' => sub {
     while ( my $line = $FileContent->next ) {
         $i++;
         row {
-            foreach my $cell (@fields) {
+            foreach my $cell ($version->sdomain->show_fields()) {
                 cell { attr { class => 'l'.$i%2}; outs $line->$cell};
             };
         };
@@ -317,12 +317,14 @@ private template '/user/admin/filedesc' => sub {
     outs 'Position des champs';
     table { attr { class => 'filedesc' };
      row {
-        foreach my $label ( @fields ) {
+        foreach my $label ( $dom->show_fields() ) {
+            next if $label eq 'line';
             th { $label };
         };
      };
      row {
-        foreach my $label ( @fields ) {
+        foreach my $label ( $dom->show_fields() ) {
+            next if $label eq 'line';
             my $pos = 'pos_'.$label;
             cell { $fileDesc->$pos };
         };

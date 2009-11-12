@@ -7,6 +7,9 @@ use Jifty::DBI::Schema;
 use ViewSpreadsheets::Record schema {
     column version =>
         refers_to ViewSpreadsheets::Model::Version;
+    column line =>
+        label is 'ligne XLS',
+        type is 'int';
     column 'ref1' =>
         label is 'Réf. 1';
     column 'ref2' =>

@@ -130,6 +130,7 @@ sub take_action {
                my $ref2 = $sheet->{Cells}[$row][$domain->filedesc->pos_ref2 -1 ]->{Val}
                             if $domain->filedesc->pos_ref2;
                $spreadsheet->create(
+                line => $row,
                 ref1 => $ref1, ref2 => $text2,
                 text1 => $text1, text2 => $text2,
                 pp => $sheet->{Cells}[$row][$domain->filedesc->pos_pp -1]->{Val},
