@@ -85,6 +85,20 @@ template '/user' => page {
         if ($dom && $dom->msg) {
             outs_raw ViewSpreadsheets::myprint($dom->msg); br{};
         };
+        my $offers = $dom->current_offers if ($dom);
+        if ($offers->count) {
+        strong { 'Offres promotionnelles'};
+            ul {
+                while (my $offer = $offers->next) {
+                    li {
+                    if ($offer->msg) { outs_raw ViewSpreadsheets::myprint($offer->msg); br{};};
+                    strong { 'Télécharger : ' }; hyperlink(label =>  $offer->filename, url => '/files/'. $offer->filename);br{};
+                    outs 'Valable du '.$offer->start_date->strftime("%a %d %b %Y %H:%M:%S").' au '.
+                        $offer->end_date->strftime("%a %d %b %Y %H:%M:%S");
+                    };
+                };
+            };
+        };
         if ($version) {
             strong { 'Télécharger : ' }; hyperlink(label =>  $version->filename, url => '/files/'. $version->filename);
             br {};

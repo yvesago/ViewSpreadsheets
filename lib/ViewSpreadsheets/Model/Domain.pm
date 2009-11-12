@@ -19,7 +19,24 @@ use ViewSpreadsheets::Record schema {
 # Your model-specific methods go here.
 
 sub before_delete {
-    # TODO: remove version
+    # TODO: remove versions
+    # TODO: remove offers
+};
+
+=head2 current_offers
+
+return a collection of current_offers
+
+=cut
+
+sub current_offers {
+    my $self = shift;
+    my $col = ViewSpreadsheets::Model::OfferCollection->new();
+       $col->limit(column => 'sdomain', value => $self->id);
+       $col->limit(column => 'start_date', value => Jifty::DateTime->now, operator => '<');
+       $col->limit(column => 'end_date', value => Jifty::DateTime->now, operator => '>');
+
+    return $col;
 };
 
 =head2 current_version

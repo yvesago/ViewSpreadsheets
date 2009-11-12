@@ -23,14 +23,14 @@ before '/user*' => run {
             Jifty->web->tangent(url => '/caslogout');
           };
     my $top = Jifty->web->navigation;
-    my $sub_nav = $top->child( _('User') => url => '/user' );
+    my $sub_nav = $top->child( 'Lots' => url => '/user', sort_order => 10 );
     my $col = ViewSpreadsheets::Model::DomainCollection->new();
        $col->unlimit;
     while (my $d = $col->next ) {
         $sub_nav->child( $d->name => url =>  '/user/dom/'.$d->id);
     };
     if (Jifty->web->current_user->group eq 'admin') {
-        my $admin_nav = $top->child( 'Admin' => url => '/user/admin/upload' );
+        my $admin_nav = $top->child( 'Admin' => url => '/user/admin/upload', sort_order => 20 );
         $admin_nav->child( 'Upload' => url =>  '/user/admin/upload');
         $admin_nav->child( 'Offre' => url =>  '/user/admin/offer');
         my $sub_admin = $admin_nav->child('<b>Tables</b>' => url =>  undef);
