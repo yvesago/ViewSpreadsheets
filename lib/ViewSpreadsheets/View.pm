@@ -184,8 +184,12 @@ template '/user/admin/offer' => page {
     div { attr { class => 'rightcol' };
         my $action = new_action(class => 'NewOffer');
         form {
-            render_action($action);
-                form_submit(label => _('Save'));
+            render_param($action,'domain', render_as => 'hidden', default_value =>$dom->id);
+            render_param($action,'start_date');
+            render_param($action,'end_date');
+            render_param($action,'file');
+            render_param($action,'msg');
+            form_submit(label => _('Save'));
             };
     };
 };
