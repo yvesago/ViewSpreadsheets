@@ -7,7 +7,7 @@ use base qw/ Jifty::View::Declare::CRUD /;
 
 my @fields = qw( ref1 plabel refplabel pdesc pp rate price );
 
-my $lang = Jifty::I18N->get_current_language;Jifty::DateTime->DefaultLocale($lang);
+my $lang = Jifty::I18N->get_current_language || 'fr'; Jifty::DateTime->DefaultLocale($lang);
 
 foreach my $model ( Jifty->class_loader->models ) {
     my $bare_model;
@@ -43,9 +43,14 @@ private template 'menu' => sub {
 
 template '/' => page {
     title is Jifty->config->framework('ApplicationName');
-    hyperlink(label => "User",url => '/user');
+    hyperlink(label => "Consulter",url => '/user');
     br {};
-    hyperlink(label => "Admin",url => '/user/admin');
+    h2 {'TODO'};
+    ul {
+        li { 'limiter personnels ?' };
+        li { 'offre spéciales?' };
+        li { 'Messages avec gestion dynamique ?' };
+    };
 };
 
 template '/user' => page {
@@ -60,6 +65,9 @@ template '/user' => page {
         if ($version) {
           strong { 'Version : '};
           outs ( $version->start_date->strftime("%a %d %b %Y %H:%M:%S") || 'Test');
+          if ( $version->id == $dom->current_version->id) {
+              br {}; strong { 'Version courante' };
+          };
         };
         show '/user/version_menu';
         br{};
@@ -106,7 +114,9 @@ template '/user/version' => sub {
     $col->limit(column => 'sdomain', value => $dom->id) ;
     $col->limit(column => 'start_date', value => undef, operator => 'not') ;
     while (my $v = $col->next ) {
-         hyperlink ( label => $v->start_date->strftime("%a %d %b %Y %H:%M:%S"), url => '/user/version/'.$v->id );
+        my $label = $v->start_date->strftime("%a %d %b %Y %H:%M:%S");
+        $label .= ' *' if $v->id == $dom->current_version->id;
+         hyperlink ( label => $label, url => '/user/version/'.$v->id );
          br {};
     };
 };
@@ -120,6 +130,7 @@ template '/user/version_menu' => sub {
     $col->limit(column => 'start_date', value => undef, operator => 'not') ;
     while (my $v = $col->next ) {
         my $date = $v->start_date->strftime("%a %d %b %Y");
+        $date .= ' *' if $v->id == $dom->current_version->id;
         $top->child(  $date => link => Jifty::Web->link(
           label => $date, url => '/user/version/'.$v->id )->as_string );
     };

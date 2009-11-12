@@ -19,6 +19,21 @@ sub before_delete {
     # TODO: remove version
 };
 
+=head2 current_version
+
+return today current version
+
+=cut
+
+sub current_version {
+    my $self = shift;
+    my $ver = ViewSpreadsheets::Model::VersionCollection->new();
+       $ver->limit(column => 'sdomain', value => $self->id);
+       $ver->limit(column => 'start_date', value => Jifty::DateTime->now, operator => '<');
+    return $ver->first || undef;
+};
+
+
 =head2 current_user_can
 
 =cut

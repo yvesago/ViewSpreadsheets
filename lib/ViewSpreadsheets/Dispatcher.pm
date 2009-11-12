@@ -47,9 +47,13 @@ before '/user*' => run {
 before qr '/user/dom/(\d+)' => run {
     my $dom_id = $1;
     my $dom = ViewSpreadsheets::Model::Domain->new();
-    $dom->load($dom_id);
     Jifty->web->session->set(Version => undef);
-    Jifty->web->session->set(Dom => $dom) if $dom->id;
+    $dom->load($dom_id);
+    if ( $dom->id ) {
+        Jifty->web->session->set(Dom => $dom);
+        # set current version
+        Jifty->web->session->set(Version => $dom->current_version);
+    };
     tangent '/user';
 };
 
