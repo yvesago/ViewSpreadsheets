@@ -15,7 +15,7 @@ use ViewSpreadsheets::Record schema {
     #    render as 'Upload',
         is mandatory;
      column start_date =>
-        label is 'Date de dÃ©but',
+        label is 'Date de début',
         type is 'datetime',
         filters are 'Jifty::DBI::Filter::DateTime',
         render as 'DateTime';

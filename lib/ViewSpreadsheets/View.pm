@@ -63,31 +63,9 @@ template '/user' => page {
         };
         show '/user/version_menu';
         br{};
-        if ( Jifty->web->current_user->group eq 'admin' ) {
-            br{};
-            br{};
-            hyperlink(label => "Upload",url => '/user/admin/upload');
-        };
     };
     div { attr { class => 'rightcol' };
         strong { 'Télécharger : ' }; hyperlink(label =>  $version->filename, url => '/files/'. $version->filename);
-        br {};
-        br {};
-        my $search = new_action(class => 'SearchSpreadsheet', moniker => 'search');
-        form {
-            #render_action($search);
-            render_param($search,'contains');
-            render_param($search,'price_dwim');
-            $search->button(
-                label   => _('Search'),
-                onclick => {
-                    submit  => $search,
-                    refresh => 'filecontent',
-                    args    => { page => 1 }
-                }
-            );
-
-        };
         br {};
         render_region(name => 'filecontent', path => '/user/filecontent');
     } if ($version);
@@ -179,14 +157,48 @@ template '/user/admin/upload' => page {
         if ($version && $version->start_date);
     div { attr { class => 'leftcol' };
         show '/user/dom_menu';
+        br {};
+        br {};
+        strong { '2 étapes :' };
+        ul {
+            li { 'uploader le fichier, vérifier que les données sont cohérentes' };
+            li { 'Mettre une date de début, pour valider le fichier' };
+        };
+        br {};
+        strong { 'En cas de problème' };
+        ul {
+            li { strong { 'Effacer données' }; outs ' pour effacer les données testées. Le fichier n\'est pas effacé mais sera écrasé par un fichier de même nom.'; }
+            li { outs 'Créer un nouveau domaine et un nouveau type de fichier dans les tables Domain et FileDesc';};
+            li { outs 'Effacer dans la table Version les versions sans date de début : c\'est des tests non effacés' };
+        };
     };
     div { attr { class => 'rightcol' };
-        show '/user/admin/filedesc';
-        br {};
-        render_region(name => 'filecontent', path => '/user/filecontent');
-        br {};
         render_region(name => 'new_version', path => '/user/admin/add_version');
+        br {};
+        show '/user/admin/filedesc';
+        hr {};
+        render_region(name => 'filecontent', path => '/user/filecontent');
     };
+};
+
+private template '/user/file_search' => sub {
+        br {};
+        my $search = new_action(class => 'SearchSpreadsheet', moniker => 'search');
+        form {
+            #render_action($search);
+            render_param($search,'contains');
+            render_param($search,'price_dwim');
+            $search->button(
+                label   => _('Search'),
+                onclick => {
+                    submit  => $search,
+                    refresh => 'filecontent',
+                    args    => { page => 1 }
+                }
+            );
+
+        };
+        br {};
 };
 
 template '/user/filecontent' => sub {
@@ -229,6 +241,9 @@ template '/user/filecontent' => sub {
         per_page => 5,
     );
 
+    show '/user/file_search';
+
+    outs 'Éléments : '; strong{ $FileContent->count }; br {};
     if ($FileContent->pager->last_page > 1) {
         div { attr { class => 'nav_content'};
         hyperlink ( label => '<', onclick => { args => {page => $FileContent->pager->previous_page, Sort => ''} } )
@@ -324,7 +339,7 @@ template '/user/admin/add_version' => sub {
     my $delete = new_action(class => 'DeleteVersion', record => $version);
     form {
         render_action($delete);
-        form_submit(label => _('Delete'));
+        form_submit(label => 'Effacer données');
     };
 };
 

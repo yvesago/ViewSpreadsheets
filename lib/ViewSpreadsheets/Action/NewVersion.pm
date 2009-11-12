@@ -69,7 +69,7 @@ sub take_action {
             #    if $self->argument_value('end_date');
             $self->result->message('Fichier validé.') if not $self->result->failure;
             Jifty->web->session->set(Version => undef);
-            Jifty->web->tangent( url => '/user/admin');
+            Jifty->web->tangent( url => '/user/dom/'.$domain->id);
             return 1;
         }
         else {
@@ -152,7 +152,7 @@ sub take_action {
 sub report_success {
     my $self = shift;
     # Your success message here
-    $self->result->message('Fichier importé. Ajoutez une date de début si l\'import est valide.');
+    $self->result->message('Fichier importé.');
 };
 
 1;
