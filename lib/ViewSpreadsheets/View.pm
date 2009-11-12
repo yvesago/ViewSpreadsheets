@@ -102,6 +102,7 @@ template '/user' => page {
         if ($version) {
             strong { 'Télécharger : ' }; hyperlink(label =>  $version->filename, url => '/files/'. $version->filename);
             br {};
+            show '/user/file_search';
             render_region(name => 'filecontent', path => '/user/filecontent');
         };
     };
@@ -237,6 +238,7 @@ template '/user/admin/upload' => page {
         br {};
         show '/user/admin/filedesc';
         hr {};
+        show '/user/file_search';
         render_region(name => 'filecontent', path => '/user/filecontent');
     };
 };
@@ -291,7 +293,12 @@ template '/user/filecontent' => sub {
         };
     };
 
-    my $search = ( Jifty->web->response->result('search') ? Jifty->web->response->result('search')->content('search') : undef );
+    my $search = Jifty->web->session->get('Search') || undef;
+    if ( Jifty->web->response->result('search') ) {
+       $search = Jifty->web->response->result('search')->content('search');
+       Jifty->web->session->set(Search => $search);
+       };
+
     my $FileContent = $search || ViewSpreadsheets::Model::SpreadsheetCollection->new();
     $FileContent->limit(column => 'version', value => $version->id);
     $FileContent->order_by(column => $sort_by, order=> $order) if ($sort_by && $order);
@@ -300,8 +307,6 @@ template '/user/filecontent' => sub {
         current_page => $page,
         per_page => 30,
     );
-
-    show '/user/file_search';
 
     outs 'Éléments : '; strong{ $FileContent->count }; br {};
     if ($FileContent->pager->last_page > 1) {
