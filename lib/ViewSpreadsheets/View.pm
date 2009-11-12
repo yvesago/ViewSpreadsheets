@@ -41,13 +41,18 @@ private template 'menu' => sub {
 
 template '/' => page {
     title is Jifty->config->framework('ApplicationName');
+    br {};
+    my $msg = ViewSpreadsheets::Model::Message->new();
+    $msg->load(1);
+    outs_raw ViewSpreadsheets::myprint($msg->publicmsg);
+    br{};
     hyperlink(label => "Consulter",url => '/user');
     br {};
     h2 {'TODO'};
     ul {
         li { 'limiter personnels' };
-        li { 'Messages avec gestion dynamique par domaine' };
-        li { 'Messages page publique' };
+        li {  strike{'Messages avec gestion dynamique par domaine'}; };
+        li {  strike{'Messages page publique'}; };
         li { 'Offres promotionnelles' };
         li { 'date de fin dernier domaine '};
         li { 'recherches par date'};
@@ -69,7 +74,7 @@ template '/user' => page {
         if ($version) {
           strong { 'Version : '};
           outs ( $version->start_date->strftime("%a %d %b %Y %H:%M:%S") || 'Test');
-          if ( $version->id == $dom->current_version->id) {
+          if ($dom->current_version && $version->id == $dom->current_version->id) {
               br {}; strong { 'Version courante' };
           };
         };
@@ -77,10 +82,15 @@ template '/user' => page {
         br{};
     };
     div { attr { class => 'rightcol' };
-        strong { 'Télécharger : ' }; hyperlink(label =>  $version->filename, url => '/files/'. $version->filename);
-        br {};
-        render_region(name => 'filecontent', path => '/user/filecontent');
-    } if ($version);
+        if ($dom && $dom->msg) {
+            outs_raw ViewSpreadsheets::myprint($dom->msg); br{};
+        };
+        if ($version) {
+            strong { 'Télécharger : ' }; hyperlink(label =>  $version->filename, url => '/files/'. $version->filename);
+            br {};
+            render_region(name => 'filecontent', path => '/user/filecontent');
+        };
+    };
 };
 
 template '/user/dom' => sub {
@@ -119,7 +129,7 @@ template '/user/version' => sub {
     $col->limit(column => 'start_date', value => undef, operator => 'not') ;
     while (my $v = $col->next ) {
         my $label = $v->start_date->strftime("%a %d %b %Y %H:%M:%S");
-        $label .= ' *' if $v->id == $dom->current_version->id;
+        $label .= ' *' if ( $dom->current_version && $v->id == $dom->current_version->id );
          hyperlink ( label => $label, url => '/user/version/'.$v->id );
          br {};
     };
@@ -134,7 +144,7 @@ template '/user/version_menu' => sub {
     $col->limit(column => 'start_date', value => undef, operator => 'not') ;
     while (my $v = $col->next ) {
         my $date = $v->start_date->strftime("%a %d %b %Y");
-        $date .= ' *' if $v->id == $dom->current_version->id;
+        $date .= ' *' if ($dom->current_version && $v->id == $dom->current_version->id);
         $top->child(  $date => link => Jifty::Web->link(
           label => $date, url => '/user/version/'.$v->id )->as_string );
     };

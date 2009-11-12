@@ -10,7 +10,10 @@ use ViewSpreadsheets::Record schema {
         is mandatory;
     column filedesc =>
         refers_to ViewSpreadsheets::Model::FileDesc;
-
+    column msg =>
+        label is 'Message',
+        render_as 'Jifty::Plugin::WikiToolbar::Textarea',
+        type is 'text';
 };
 
 # Your model-specific methods go here.
