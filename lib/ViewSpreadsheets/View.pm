@@ -86,7 +86,7 @@ template '/user' => page {
             outs_raw ViewSpreadsheets::myprint($dom->msg); br{};
         };
         my $offers = $dom->current_offers if ($dom);
-        if ($offers->count) {
+        if ($offers && $offers->count) {
         strong { 'Offres promotionnelles'};
             ul {
                 while (my $offer = $offers->next) {
@@ -104,6 +104,7 @@ template '/user' => page {
             br {};
             show '/user/file_search';
             render_region(name => 'filecontent', path => '/user/filecontent');
+            show '/user/choose_nblines';
         };
     };
 };
@@ -240,6 +241,7 @@ template '/user/admin/upload' => page {
         hr {};
         show '/user/file_search';
         render_region(name => 'filecontent', path => '/user/filecontent');
+        show '/user/choose_nblines';
     };
 };
 
@@ -305,7 +307,7 @@ template '/user/filecontent' => sub {
 
     $FileContent->set_page_info(
         current_page => $page,
-        per_page => 30,
+        per_page => Jifty->web->session->get('NBlines') || 30,
     );
 
     outs 'Éléments : '; strong{ $FileContent->count }; br {};
@@ -356,6 +358,18 @@ template '/user/filecontent' => sub {
     };
 
   br{};
+};
+
+private template '/user/choose_nblines' => sub {
+    my $action = new_action('ChgNbLines');
+    form  {
+        render_action($action);
+         hyperlink ( label => 'Modifier',
+            onclick => [
+                { submit => $action },
+                { refresh => 'filecontent'}
+                ] );
+    };
 };
 
 private template '/user/admin/filedesc' => sub {
