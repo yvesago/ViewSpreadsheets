@@ -118,9 +118,18 @@ sub take_action {
         next if ! defined $sheet->{MaxRow};
        foreach my $row ($sheet->{MinRow} .. $sheet->{MaxRow}) {
            my $valid_row = 0;
-           my $numval = $sheet->{Cells}[$row][$domain->filedesc->pos_pp -1];
-           $valid_row = 1
-             if ($numval && $numval->{Val} =~m/^\d/ );
+           my $numcell = $sheet->{Cells}[$row][$domain->filedesc->pos_pp -1];
+
+           if ($numcell && $numcell->{Val} =~m/^\d/ ) {
+                # catch font and back color
+                my @cellcolor = @{$numcell->{Format}->{Fill}};
+                my $backcolor = $cellcolor[1];
+                my $fontcolor = $numcell->{Format}->{Font}->{Color} ;
+                # TODO read exclude_value
+                # XXX can't read font color
+                # warn $numcell->{Val}.'-font '.$fontcolor.'- back '.$backcolor;
+                $valid_row = 1 if (! ( $fontcolor == 10 || $backcolor == 10)  ) ;
+           };
 
           if ($valid_row) {
                my $text1 = encode('utf8',$sheet->{Cells}[$row][$domain->filedesc->pos_text1 -1]->{Val});
