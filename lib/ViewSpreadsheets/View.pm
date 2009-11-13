@@ -73,7 +73,7 @@ template '/user' => page {
     else {  show '/user/dom'; };
     
     div { attr { class => 'leftcol' };
-        if ($version) {
+        if ($version && $version->start_date) {
           if ($dom->current_version && $version->id == $dom->current_version->id) {
               my $reftime = Jifty->web->session->get('RefTime');
               ($reftime) ?
@@ -94,13 +94,16 @@ template '/user' => page {
         show '/user/choose_date' if ($dom || $version);
         if (Jifty->web->current_user->group eq 'admin') {
             br {};
-            hr {};
-            strong { 'admin : ' };
-            outs 'visu versions disponibles';
-            br {}
-            strong { attr {class => 'red'}; 'ATTENTION : ' };
-            outs 'ne pas tenire compte des offres';
-            show '/user/version_menu';
+            div{ attr { class => 'info-admin'};
+                strong { 'admin : ' };
+                outs 'visu versions dispo.';
+                br {}
+                strong { attr {class => 'red'}; 'ATTENTION : ' };
+                outs 'ne pas tenir compte des offres';
+                show '/user/version_menu';
+                br{}; br{};
+                br{}; br{};
+            };
         };
 
     };
@@ -395,7 +398,8 @@ template '/user/filecontent' => sub {
         $i++;
         row {
             foreach my $cell ($version->sdomain->show_fields()) {
-                cell { attr { class => 'l'.$i%2}; outs $line->$cell};
+                my $class = ($line->highlight)?'highlight':'l'.$i%2;
+                cell { attr { class => $class}; outs $line->$cell};
             };
         };
     };

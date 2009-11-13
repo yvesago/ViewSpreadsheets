@@ -23,6 +23,13 @@ use ViewSpreadsheets::Record schema {
         type is 'int';
     column pos_price =>
         type is 'int';
+    column highlight =>
+        hint is 'Highlight line',
+        type is 'int';
+    column valid_line =>
+        render as 'Textarea';
+    column exclude_line =>
+        render as 'Textarea';
 
 };
 

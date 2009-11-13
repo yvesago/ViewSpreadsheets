@@ -52,6 +52,14 @@ body {
     background-color: #f1f6ff;
 }
 
+.highlight {
+    background-color: #9BA8F8;
+}
+
+.info-admin {
+       background-color: #ccdddd;
+}
+
 .ui-timepickr span {
     border:0;
     color:#ccc;

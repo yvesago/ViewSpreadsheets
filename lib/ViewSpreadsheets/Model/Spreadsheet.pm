@@ -28,6 +28,9 @@ use ViewSpreadsheets::Record schema {
     column 'price' =>
         type is 'float',
         label is 'Prix';
+    column 'highlight' =>
+        type is 'tinyint',
+        default is '0';
 };
 
 # Your model-specific methods go here.

@@ -132,11 +132,13 @@ sub take_action {
                my $pp = sprintf "%.2f", $sheet->{Cells}[$row][$domain->filedesc->pos_pp -1]->{Val};
                my $rate = sprintf "%.2f", $sheet->{Cells}[$row][$domain->filedesc->pos_rate -1]->{Val};
                my $price = sprintf "%.2f", $sheet->{Cells}[$row][$domain->filedesc->pos_price -1]->{Val};
+               my $highlight = ($sheet->{Cells}[$row][$domain->filedesc->highlight -1]->{Val})?1:0;
                $spreadsheet->create(
                 line => $row+1,
                 ref1 => $ref1, ref2 => $ref2,
                 text1 => $text1, text2 => $text2,
                 pp => $pp, rate => $rate, price => $price,
+                highlight => $highlight,
                 version => $version->id
                 );
                };
