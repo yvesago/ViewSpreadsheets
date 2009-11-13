@@ -15,6 +15,10 @@ body {
   width: 70%;
 }
 
+.red {
+    color: #900;
+}
+
 .fildesc {
   margin:10px;
   border-collapse: collapse;

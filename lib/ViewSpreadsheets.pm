@@ -30,6 +30,34 @@ sub myprint {
     return $mytext;
 };
 
+=head2 mydate
+
+parse a datetime return a jifty::datetime usable with strftime
+
+=cut
+
+sub mydate {
+  my $date  = shift;
+  my $dt;
+
+  if ( $date =~ m/^(\d{4})-(\d\d)-(\d\d) (\d\d):(\d\d):(\d\d)$/ ) {
+        $dt = Jifty::DateTime->new(
+            year   => $1,
+            month  => $2,
+            day    => $3,
+            hour => $4,
+            minute => $5,
+            second => $6,
+            time_zone => 'Europe/Paris',
+        );
+    }
+    else {
+        warn "can't parse date from ", $date;
+    }
+
+  return $dt;
+};
+
 
 =head1 AUTHOR
 

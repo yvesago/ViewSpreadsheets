@@ -53,12 +53,14 @@ template '/' => page {
         li { 'limiter personnels' };
         li {  strike{'Messages avec gestion dynamique par domaine'}; };
         li {  strike{'Messages page publique'}; };
-        li { 'Offres promotionnelles' };
-        li { 'date de fin dernier domaine '};
-        li { 'recherches par date'};
+        li { strike{'Offres promotionnelles'} };
+        li { strike{'date de fin dernier domaine '}};
+        li { strike{'recherches par date'}};
         li { 'nettoyage nom de fichier'};
         li { strike{'numéro de ligne excel'}; };
         li { strike{'tri des colones par ordre d\'origine'}; };
+        li { 'lignes à exclure'};
+        li { 'nlle lignes'};
     };
 };
 
@@ -72,14 +74,25 @@ template '/user' => page {
     
     div { attr { class => 'leftcol' };
         if ($version) {
+          if ($dom->current_version && $version->id == $dom->current_version->id) {
+              my $reftime = Jifty->web->session->get('RefTime');
+              ($reftime) ?
+                  strong { ViewSpreadsheets::mydate($reftime)->strftime("%A %d %b %Y %H:%M:%S") }:
+                  strong { 'Version courante' };
+              br {};
+          };
           strong { 'Version : '};
           outs ( $version->start_date->strftime("%a %d %b %Y %H:%M:%S") || 'Test');
-          if ($dom->current_version && $version->id == $dom->current_version->id) {
-              br {}; strong { 'Version courante' };
+          if ( $version->end_date ) {
+              br {}; br {};
+              strong { attr {class => 'red'}; 'ATTENTION : ' }; 
+              outs 'expire le '. $version->end_date->strftime("%a %d %b %Y %H:%M:%S");
           };
         };
-        show '/user/version_menu';
+        #show '/user/version_menu';
         br{};
+        br{};
+        show '/user/choose_date' if ($dom || $version);
     };
     div { attr { class => 'rightcol' };
         if ($dom && $dom->msg) {
@@ -106,6 +119,24 @@ template '/user' => page {
             render_region(name => 'filecontent', path => '/user/filecontent');
             show '/user/choose_nblines';
         };
+    };
+};
+
+private template '/user/choose_date' => sub {
+    my $action = new_action('TimeMachine');
+    outs 'Changer de version' ;
+    if (Jifty->web->session->get('RefTime') ) {
+        form {
+            render_param($action,'today',default_value => 1);
+            form_submit(label => 'Aujourd\'hui');
+        };
+    }
+    else {
+        br {}; };
+    outs 'à cette date :';
+    form {
+        render_action($action);
+        form_submit(label => 'Valider');
     };
 };
 
@@ -239,6 +270,7 @@ template '/user/admin/upload' => page {
         br {};
         show '/user/admin/filedesc';
         hr {};
+        h2 { 'Vérifiez le fichier importé' };
         show '/user/file_search';
         render_region(name => 'filecontent', path => '/user/filecontent');
         show '/user/choose_nblines';

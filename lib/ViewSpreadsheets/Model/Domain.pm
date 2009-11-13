@@ -31,10 +31,11 @@ return a collection of current_offers
 
 sub current_offers {
     my $self = shift;
+    my $reftime = Jifty->web->session->get('RefTime') || Jifty::DateTime->now;
     my $col = ViewSpreadsheets::Model::OfferCollection->new();
        $col->limit(column => 'sdomain', value => $self->id);
-       $col->limit(column => 'start_date', value => Jifty::DateTime->now, operator => '<');
-       $col->limit(column => 'end_date', value => Jifty::DateTime->now, operator => '>');
+       $col->limit(column => 'start_date', value => $reftime, operator => '<');
+       $col->limit(column => 'end_date', value => $reftime, operator => '>');
 
     return $col;
 };
@@ -47,9 +48,10 @@ return today current version
 
 sub current_version {
     my $self = shift;
+    my $reftime = Jifty->web->session->get('RefTime') || Jifty::DateTime->now;
     my $ver = ViewSpreadsheets::Model::VersionCollection->new();
        $ver->limit(column => 'sdomain', value => $self->id);
-       $ver->limit(column => 'start_date', value => Jifty::DateTime->now, operator => '<');
+       $ver->limit(column => 'start_date', value => $reftime, operator => '<');
     return $ver->first || undef;
 };
 
