@@ -52,6 +52,7 @@ sub current_version {
     my $ver = ViewSpreadsheets::Model::VersionCollection->new();
        $ver->limit(column => 'sdomain', value => $self->id);
        $ver->limit(column => 'start_date', value => $reftime, operator => '<');
+       $ver->order_by(column => 'start_date', order=> 'DESC');
     return $ver->first || undef;
 };
 

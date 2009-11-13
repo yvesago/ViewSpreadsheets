@@ -129,13 +129,14 @@ sub take_action {
                             if $domain->filedesc->pos_ref1;
                my $ref2 = $sheet->{Cells}[$row][$domain->filedesc->pos_ref2 -1 ]->{Val}
                             if $domain->filedesc->pos_ref2;
+               my $pp = sprintf "%.2f", $sheet->{Cells}[$row][$domain->filedesc->pos_pp -1]->{Val};
+               my $rate = sprintf "%.2f", $sheet->{Cells}[$row][$domain->filedesc->pos_rate -1]->{Val};
+               my $price = sprintf "%.2f", $sheet->{Cells}[$row][$domain->filedesc->pos_price -1]->{Val};
                $spreadsheet->create(
-                line => $row,
-                ref1 => $ref1, ref2 => $text2,
+                line => $row+1,
+                ref1 => $ref1, ref2 => $ref2,
                 text1 => $text1, text2 => $text2,
-                pp => $sheet->{Cells}[$row][$domain->filedesc->pos_pp -1]->{Val},
-                rate => $sheet->{Cells}[$row][$domain->filedesc->pos_rate -1]->{Val},
-                price => $sheet->{Cells}[$row][$domain->filedesc->pos_price -1]->{Val},
+                pp => $pp, rate => $rate, price => $price,
                 version => $version->id
                 );
                };

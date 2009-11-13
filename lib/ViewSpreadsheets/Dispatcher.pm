@@ -30,10 +30,11 @@ before '/user*' => run {
         $sub_nav->child( $d->name => url =>  '/user/dom/'.$d->id);
     };
     if (Jifty->web->current_user->group eq 'admin') {
-        my $admin_nav = $top->child( 'Admin' => url => '/user/admin/upload', sort_order => 20 );
+        my $admin_nav = $top->child( 'Fichiers' => url => '/user/admin/upload', sort_order => 20 );
         $admin_nav->child( 'Upload' => url =>  '/user/admin/upload');
         $admin_nav->child( 'Offre' => url =>  '/user/admin/offer');
-        my $sub_admin = $admin_nav->child('<b>Tables</b>' => url =>  undef);
+
+        my $sub_admin = $top->child('<b>Tables</b>' => url =>  undef, sort_order => 30 );
         foreach my $model ( Jifty->class_loader->models ) {
            my $bare_model;
             if ( $model =~ /^.*::(.*?)$/ ) {

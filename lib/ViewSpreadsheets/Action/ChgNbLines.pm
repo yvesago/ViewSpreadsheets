@@ -14,8 +14,7 @@ use Jifty::Param::Schema;
 use Jifty::Action schema {
     param nblines =>
         label is 'Lignes à afficher',
-        hints is 'Entre 5 et 100',
-        default is '30';
+        hints is 'Entre 5 et 100';
 
 };
 

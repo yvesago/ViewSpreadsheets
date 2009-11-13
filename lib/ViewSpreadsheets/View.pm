@@ -85,14 +85,24 @@ template '/user' => page {
           outs ( $version->start_date->strftime("%a %d %b %Y %H:%M:%S") || 'Test');
           if ( $version->end_date ) {
               br {}; br {};
-              strong { attr {class => 'red'}; 'ATTENTION : ' }; 
+              strong { attr {class => 'red'}; 'ATTENTION : ' };
               outs 'expire le '. $version->end_date->strftime("%a %d %b %Y %H:%M:%S");
           };
         };
-        #show '/user/version_menu';
         br{};
         br{};
         show '/user/choose_date' if ($dom || $version);
+        if (Jifty->web->current_user->group eq 'admin') {
+            br {};
+            hr {};
+            strong { 'admin : ' };
+            outs 'visu versions disponibles';
+            br {}
+            strong { attr {class => 'red'}; 'ATTENTION : ' };
+            outs 'ne pas tenire compte des offres';
+            show '/user/version_menu';
+        };
+
     };
     div { attr { class => 'rightcol' };
         if ($dom && $dom->msg) {
@@ -174,6 +184,7 @@ template '/user/version' => sub {
     my $col = ViewSpreadsheets::Model::VersionCollection->new();
     $col->limit(column => 'sdomain', value => $dom->id) ;
     $col->limit(column => 'start_date', value => undef, operator => 'not') ;
+    $col->order_by(column => 'start_date', order=> 'DESC');
     while (my $v = $col->next ) {
         my $label = $v->start_date->strftime("%a %d %b %Y %H:%M:%S");
         $label .= ' *' if ( $dom->current_version && $v->id == $dom->current_version->id );
@@ -189,6 +200,7 @@ template '/user/version_menu' => sub {
     my $col = ViewSpreadsheets::Model::VersionCollection->new();
     $col->limit(column => 'sdomain', value => $dom->id) ;
     $col->limit(column => 'start_date', value => undef, operator => 'not') ;
+    $col->order_by(column => 'start_date', order=> 'DESC');
     while (my $v = $col->next ) {
         my $date = $v->start_date->strftime("%a %d %b %Y");
         $date .= ' *' if ($dom->current_version && $v->id == $dom->current_version->id);
@@ -395,7 +407,7 @@ template '/user/filecontent' => sub {
 private template '/user/choose_nblines' => sub {
     my $action = new_action('ChgNbLines');
     form  {
-        render_action($action);
+        render_param($action,'nblines', default_value => Jifty->web->session->get('NBlines') || 30);
          hyperlink ( label => 'Modifier',
             onclick => [
                 { submit => $action },
