@@ -52,8 +52,16 @@ body {
     background-color: #f1f6ff;
 }
 
-.highlight {
+.highlight-blue {
     background-color: #9BA8F8;
+}
+
+.highlight-red {
+    background-color: #FB9898;
+}
+
+.highlight-green {
+    background-color: #98FB98;
 }
 
 .info-admin {

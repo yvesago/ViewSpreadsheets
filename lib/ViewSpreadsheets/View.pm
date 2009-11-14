@@ -400,7 +400,7 @@ template '/user/filecontent' => sub {
         $i++;
         row {
             foreach my $cell ($version->sdomain->show_fields()) {
-                my $class = ($line->highlight)?'highlight':'l'.$i%2;
+                my $class = ($line->highlight)?'highlight-'.$line->highlight:'l'.$i%2;
                 cell { attr { class => $class}; outs $line->$cell};
             };
         };
