@@ -127,10 +127,17 @@ sub take_action {
                 my @cellcolor = @{$numcell->{Format}->{Fill}};
                 $backcolor = $cellcolor[1];
                 $fontcolor = $numcell->{Format}->{Font}->{Color} ;
-                # TODO read exclude_value
                 # XXX can't read font color
-                # warn $numcell->{Val}.'-font '.$fontcolor.'- back '.$backcolor;
-                $valid_row = 1 if (! ( $fontcolor == 10 || $backcolor == 10)  ) ;
+                $valid_row = 1;
+                if ( $domain->filedesc->exclude_line_color ) {
+                    $valid_row = 0
+                        if $domain->filedesc->exclude_line_color eq $fontcolor ||
+                          $domain->filedesc->exclude_line_color eq $backcolor;
+                };
+                if ( $domain->filedesc->exclude_line_pos ) {
+                    $valid_row = 0
+                        if $sheet->{Cells}[$row][$domain->filedesc->exclude_line_pos -1]->{Val};
+                };
            };
 
           if ($valid_row) {
@@ -148,14 +155,17 @@ sub take_action {
                     $highlight = $domain->filedesc->high1_render
                         if $sheet->{Cells}[$row][$domain->filedesc->high1_pos -1]->{Val};
                 } 
-                elsif ( $domain->filedesc->high2_pos ) {
-                    $highlight = $domain->filedesc->high2_render
-                        if $sheet->{Cells}[$row][$domain->filedesc->high2_pos -1]->{Val};
-                } 
                 elsif ( $domain->filedesc->high1_color ) {
                     $highlight = $domain->filedesc->high1_render
                         if $backcolor eq $domain->filedesc->high1_color || $fontcolor eq $domain->filedesc->high1_color;
                 } 
+                else {
+                $highlight = undef;
+                };
+                if ( $domain->filedesc->high2_pos ) {
+                    $highlight = $domain->filedesc->high2_render
+                        if $sheet->{Cells}[$row][$domain->filedesc->high2_pos -1]->{Val};
+                }
                 elsif ( $domain->filedesc->high2_color ) {
                     $highlight = $domain->filedesc->high2_render
                         if $backcolor eq $domain->filedesc->high2_color || $fontcolor eq $domain->filedesc->high2_color;
