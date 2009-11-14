@@ -6,7 +6,7 @@ use Jifty::DBI::Schema;
 
 use ViewSpreadsheets::Record schema {
     column 'user_role' =>
-        valid_values are qw(admin user guest),
+        valid_values are qw(admin user),
         default is 'user';
 };
 
@@ -16,6 +16,9 @@ use Jifty::Plugin::User::Mixin::Model::User;
 #use Jifty::Plugin::Authentication::Ldap::Mixin::Model::User;
 use Jifty::Plugin::Authentication::CAS::Mixin::Model::User;
 
+sub before_delete {
+#TODO clean uploaders
+};
 
 =head2 current_user_can
 

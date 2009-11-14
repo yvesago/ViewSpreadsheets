@@ -60,7 +60,7 @@ template '/' => page {
         li { strike{'tri des colones par ordre d\'origine'}; };
         li { 'nettoyage nom de fichier'};
         li { 'lignes à exclure'};
-        li { hyperlink( name => 'color picker', url => 'http://www.web2media.net/laktek/2008/10/27/really-simple-color-picker-in-jquery/'};
+        li { hyperlink( name => 'color picker', url => 'http://www.web2media.net/laktek/2008/10/27/really-simple-color-picker-in-jquery/'); };
         li { 'uploader par domain' };
         li { 'nlle lignes'};
     };

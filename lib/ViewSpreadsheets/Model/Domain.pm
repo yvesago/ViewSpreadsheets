@@ -21,6 +21,7 @@ use ViewSpreadsheets::Record schema {
 sub before_delete {
     # TODO: remove versions
     # TODO: remove offers
+    # TODO: remove uploaders
 };
 
 =head2 current_offers

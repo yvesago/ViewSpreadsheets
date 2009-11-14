@@ -23,14 +23,26 @@ use ViewSpreadsheets::Record schema {
         type is 'int';
     column pos_price =>
         type is 'int';
-    column highlight =>
-        hint is 'Highlight line',
+    column high1_pos =>
+        hints is 'Highlight line',
         type is 'int';
-    column valid_line =>
-        render as 'Textarea';
-    column exclude_line =>
-        render as 'Textarea';
-
+    column high1_color =>
+        hints is 'Highlight line with color';
+    column high1_render =>
+        valid_values are qw(red green blue),
+        hints is 'Render line with color';
+    column high2_pos =>
+        hints is 'Highlight line',
+        type is 'int';
+    column high2_color =>
+        hints is 'Highlight line with color';
+    column high2_render =>
+        valid_values are qw(red green blue),
+        hints is 'Render line with color';
+    column exclude_line_pos =>
+        type is 'int';
+    column exclude_line_color =>
+        hints is 'Line contains color';
 };
 
 # Your model-specific methods go here.
