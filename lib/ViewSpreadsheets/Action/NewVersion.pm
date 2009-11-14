@@ -112,6 +112,7 @@ sub take_action {
    # Read spreadsheet
    my $spreadsheet = ViewSpreadsheets::Model::Spreadsheet->new();
 
+   my $oParse = Spreadsheet::ParseExcel->new();
    my $excel = Spreadsheet::ParseExcel::Workbook->Parse($destdir.$filename);
    foreach my $sheet (@{$excel->{Worksheet}}) {
        $sheet->{MaxRow} ||= $sheet->{MinRow};
@@ -125,8 +126,8 @@ sub take_action {
                 $val = $numcell->{Val};
                 # catch font and back color
                 my @cellcolor = @{$numcell->{Format}->{Fill}};
-                $backcolor = $cellcolor[1];
-                $fontcolor = $numcell->{Format}->{Font}->{Color} ;
+                $backcolor = '#'.lc($oParse->ColorIdxToRGB( $cellcolor[1] ));
+                $fontcolor = '#'.lc($oParse->ColorIdxToRGB( $numcell->{Format}->{Font}->{Color} ));
                 # XXX can't read font color
                 $valid_row = 1;
                 if ( $domain->filedesc->exclude_line_color ) {
