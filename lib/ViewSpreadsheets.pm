@@ -11,6 +11,19 @@ ViewSpreadsheets - access and view spreadsheets
 
 =head1 DESCRIPTION
 
+
+=cut
+
+sub start {
+    my $self = shift;
+    Jifty->web->add_javascript(
+    qw(
+    jquery.colorPicker.js
+    )
+    );
+}
+
+
 =head2 myprint
 
 clean markdown output

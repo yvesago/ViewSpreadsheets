@@ -27,6 +27,7 @@ use ViewSpreadsheets::Record schema {
         hints is 'Highlight line',
         type is 'int';
     column high1_color =>
+        render as 'ViewSpreadsheets::SimpleColor',
         hints is 'Highlight line with color';
     column high1_render =>
         valid_values are qw(red green blue),
@@ -35,6 +36,7 @@ use ViewSpreadsheets::Record schema {
         hints is 'Highlight line',
         type is 'int';
     column high2_color =>
+        render as 'ViewSpreadsheets::SimpleColor',
         hints is 'Highlight line with color';
     column high2_render =>
         valid_values are qw(red green blue),
@@ -42,10 +44,14 @@ use ViewSpreadsheets::Record schema {
     column exclude_line_pos =>
         type is 'int';
     column exclude_line_color =>
+        render as 'ViewSpreadsheets::SimpleColor',
         hints is 'Line contains color';
 };
 
 # Your model-specific methods go here.
+
+sub ViewSpreadsheets::SimpleColor::defaultColors { return "['F00', '0F0', '00f', 'fff', '000']"; };
+sub ViewSpreadsheets::SimpleColor::addColors { return "['900', '090', '009', 'ccc']"; };
 
 =head2 current_user_can
 
