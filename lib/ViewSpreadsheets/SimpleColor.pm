@@ -43,7 +43,7 @@ sub render_widget {
 
     my $defaultColors = $self->defaultColors() || undef;
     my $addColors = $self->addColors() || undef;
-    my $current_value = $self->current_value || undef;
+    my $current_value = $self->current_value || '';
 
     $field .= qq!<div>!;
     $field .= qq!<input id="$element_id"!;
@@ -78,17 +78,17 @@ sub render_value {
     my $self  = shift;
     my $field;
 
-    my $current_value = $self->current_value || undef;
+    my $current_value = $self->current_value || '';
     $field .= <<"E2F";
 <div style="
   height: 16px;
   width: 16px;
   padding: 0 !important;
   border: 1px solid #ccc;
-  background-color: $current_value;
-  cursor: pointer;
-  line-height: 16px;">\&nbsp;</div>
 E2F
+ $field .= qq!  background-color: $current_value;! if $current_value;
+ $field .= qq!  line-height: 16px;">\&nbsp;</div>!;
+
 
     Jifty->web->out($field);
     '';
