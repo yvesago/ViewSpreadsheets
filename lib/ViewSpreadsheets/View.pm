@@ -59,10 +59,10 @@ template '/' => page {
         li { strike{'numéro de ligne excel'}; };
         li { strike{'tri des colones par ordre d\'origine'}; };
         li { 'nettoyage nom de fichier'};
-        li { 'lignes à exclure'};
-        li { hyperlink( name => 'color picker', url => 'http://www.web2media.net/laktek/2008/10/27/really-simple-color-picker-in-jquery/'); };
+        li { strike{ 'lignes à exclure'} };
+        li { strike{hyperlink( label => 'color picker', url => 'http://www.web2media.net/laktek/2008/10/27/really-simple-color-picker-in-jquery/'); } };
         li { 'uploader par domain' };
-        li { 'nlle lignes'};
+        li { strike{'nlle lignes'}; outs 'highlignt2'; };
     };
 };
 
@@ -443,6 +443,34 @@ private template '/user/admin/filedesc' => sub {
             cell { $fileDesc->$pos };
         };
      };
+    };
+    if ( $fileDesc->exclude_line_pos || $fileDesc->exclude_line_color ) {
+        outs 'Exlusions des lignes ';
+        outs ' de la colone '.$fileDesc->exclude_line_pos.' ' if $fileDesc->exclude_line_pos;
+        if ( $fileDesc->exclude_line_color ) {
+         span { attr { style => 'background-color: '.$fileDesc->exclude_line_color.';' };
+            outs ' de couleur '; }; br {};
+            };
+    };
+    if ( $fileDesc->high1_render ne 'no') {
+        span { attr { class => 'highlight-'.$fileDesc->high1_render };
+            outs ' highligh '; };
+            outs ' des lignes ';
+            outs ' de la colone '.$fileDesc->high1_pos if $fileDesc->high1_pos;
+         if ($fileDesc->high1_color) {
+         span { attr { style => 'background-color: '.$fileDesc->high1_color.';' };
+            outs ' de couleur '; }
+         };
+    };
+    if ( $fileDesc->high2_render ne 'no') {
+        span { attr { class => 'highlight-'.$fileDesc->high2_render };
+            outs ' highligh '; };
+            outs ' des lignes ';
+            outs ' de la colone '.$fileDesc->high2_pos if $fileDesc->high2_pos;
+         if ($fileDesc->high2_color) {
+         span { attr { style => 'background-color: '.$fileDesc->high2_color.';' };
+            outs ' de couleur '; }
+         };
     };
 };
 

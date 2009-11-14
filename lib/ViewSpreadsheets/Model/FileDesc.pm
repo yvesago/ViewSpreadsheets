@@ -30,7 +30,7 @@ use ViewSpreadsheets::Record schema {
         render as 'ViewSpreadsheets::SimpleColor',
         hints is 'Highlight line with color';
     column high1_render =>
-        valid_values are qw(red green blue),
+        valid_values are qw(no red green blue),
         hints is 'Render line with color';
     column high2_pos =>
         hints is 'Highlight line',
@@ -39,7 +39,7 @@ use ViewSpreadsheets::Record schema {
         render as 'ViewSpreadsheets::SimpleColor',
         hints is 'Highlight line with color';
     column high2_render =>
-        valid_values are qw(red green blue),
+        valid_values are qw(no red green blue),
         hints is 'Render line with color';
     column exclude_line_pos =>
         type is 'int';
