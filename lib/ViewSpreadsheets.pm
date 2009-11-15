@@ -19,9 +19,10 @@ sub start {
     Jifty->web->add_javascript(
     qw(
     jquery.colorPicker.js
+    datetimefr.js
     )
     );
-}
+};
 
 
 =head2 myprint
