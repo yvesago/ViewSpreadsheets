@@ -80,7 +80,11 @@ sub mydate {
 
 sub conv2ascii {
  my ($self,$string) = @_;
- return unac_string('latin1',$string);
+ my $res = unac_string('latin1',$string);
+ $res = unac_string('utf8',$string) if( !$res);
+ $res = $string if( !$res);
+
+ return $res;
 };
 
 =head2 clean_file_name
@@ -92,12 +96,14 @@ use Text::Unaccent;
 
 sub clean_file_name {
     my $self = shift;
-    my $string = shift;
+    my $name = shift;
+    my ($string,$ext) = $name =~m/^(.*?)\.(\w+)$/;
     $string=~s/[ ']/-/g;
     $string=~s/#/Sharp/g;
     $string=$self->conv2ascii($string);
-    $string=~s/[^A-Za-z0-9>\-_]//g;
-    return $string;
+    $string=~s/[^A-Za-z0-9>\-_]+\.//g;
+    $string=~s/\-\-/\-/g;
+    return $string.'.'.$ext;
 };
 
 =head1 AUTHOR

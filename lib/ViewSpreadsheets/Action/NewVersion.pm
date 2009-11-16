@@ -122,7 +122,7 @@ sub take_action {
            my $valid_row = 0;
            my $numcell = $sheet->{Cells}[$row][$domain->filedesc->pos_pp -1];
 
-           if ($numcell && $numcell->{Val} =~m/^\d/ ) {
+           if ($numcell && $numcell->{Val} =~m/^(-?)\d/ ) {
                 $val = $numcell->{Val};
                 # catch font and back color
                 my @cellcolor = @{$numcell->{Format}->{Fill}};
@@ -142,15 +142,20 @@ sub take_action {
            };
 
           if ($valid_row) {
-               my $text1 = encode('utf8',$sheet->{Cells}[$row][$domain->filedesc->pos_text1 -1]->{Val});
-               my $text2 = encode('utf8',$sheet->{Cells}[$row][$domain->filedesc->pos_text2 -1]->{Val});
-               my $ref1 = $sheet->{Cells}[$row][$domain->filedesc->pos_ref1 -1 ]->{Val}
+               my $text1 = encode('utf8',$sheet->{Cells}[$row][$domain->filedesc->pos_text1 -1]->{Val})
+                    if $domain->filedesc->pos_text1;
+               my $text2 = encode('utf8',$sheet->{Cells}[$row][$domain->filedesc->pos_text2 -1]->{Val})
+                    if $domain->filedesc->pos_text2;
+               my $ref1 = encode('utf8',$sheet->{Cells}[$row][$domain->filedesc->pos_ref1 -1 ]->{Val})
                             if $domain->filedesc->pos_ref1;
-               my $ref2 = $sheet->{Cells}[$row][$domain->filedesc->pos_ref2 -1 ]->{Val}
+               my $ref2 = encode('utf8',$sheet->{Cells}[$row][$domain->filedesc->pos_ref2 -1 ]->{Val})
                             if $domain->filedesc->pos_ref2;
-               my $pp = sprintf "%.2f", $sheet->{Cells}[$row][$domain->filedesc->pos_pp -1]->{Val};
-               my $rate = sprintf "%.2f", $sheet->{Cells}[$row][$domain->filedesc->pos_rate -1]->{Val};
-               my $price = sprintf "%.2f", $sheet->{Cells}[$row][$domain->filedesc->pos_price -1]->{Val};
+               my $pp = sprintf "%.2f", $sheet->{Cells}[$row][$domain->filedesc->pos_pp -1]->{Val}
+                        if $domain->filedesc->pos_pp;
+               my $rate = sprintf "%.2f", $sheet->{Cells}[$row][$domain->filedesc->pos_rate -1]->{Val}
+                        if $domain->filedesc->pos_rate;
+               my $price = sprintf "%.2f", $sheet->{Cells}[$row][$domain->filedesc->pos_price -1]->{Val}
+                        if $domain->filedesc->pos_price;
                my $highlight;
                if ( $domain->filedesc->high1_pos ) {
                     $highlight = $domain->filedesc->high1_render
