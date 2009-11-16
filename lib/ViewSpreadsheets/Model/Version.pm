@@ -66,6 +66,10 @@ sub current_user_can {
           $self->current_user->is_superuser;
     return 1
         if ($type eq 'read');
+    # allow uploader
+    my $dom = Jifty->web->session->get('Dom');
+    return 1
+        if $dom && $dom->is_uploader;
 
     return $self->SUPER::current_user_can($type, @_);
 
@@ -73,7 +77,3 @@ sub current_user_can {
 
 
 1;
-
-
-
-

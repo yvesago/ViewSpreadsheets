@@ -29,11 +29,15 @@ before '/user*' => run {
     while (my $d = $col->next ) {
         $sub_nav->child( $d->name => url =>  '/user/dom/'.$d->id);
     };
-    if (Jifty->web->current_user->group eq 'admin') {
+
+    my $dom = Jifty->web->session->get('Dom');
+    if (Jifty->web->current_user->group eq 'admin' || ($dom && $dom->is_uploader)) {
         my $admin_nav = $top->child( 'Fichiers' => url => '/user/admin/upload', sort_order => 20 );
         $admin_nav->child( 'Upload' => url =>  '/user/admin/upload');
         $admin_nav->child( 'Offre' => url =>  '/user/admin/offer');
+    };
 
+    if (Jifty->web->current_user->group eq 'admin') {
         my $sub_admin = $top->child('<b>Tables</b>' => url =>  undef, sort_order => 30 );
         foreach my $model ( Jifty->class_loader->models ) {
            my $bare_model;
@@ -68,11 +72,13 @@ before qr '/user/version/(\d+)' => run {
 };
 
 before '/user/admin*' => run  {
-   unless(Jifty->web->current_user->group eq 'admin' || Jifty->web->current_user->group eq 'reader' ) {
+   my $dom = Jifty->web->session->get('Dom');
+   unless(Jifty->web->current_user->group eq 'admin' || Jifty->web->current_user->group eq 'reader'
+         || $dom->is_uploader
+   ) {
             Jifty->web->tangent(url => '/accessdenied');
           };
 
-    my $dom = Jifty->web->session->get('Dom');
 
     unless ( $dom ) {
       tangent '/user';

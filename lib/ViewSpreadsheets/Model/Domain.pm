@@ -24,6 +24,20 @@ sub before_delete {
     # TODO: remove uploaders
 };
 
+=head2 is_uploader
+
+return value if current user is uploader for this domain
+
+=cut
+
+sub is_uploader {
+    my $self = shift;
+    my $uploader = ViewSpreadsheets::Model::uploaderCollection->new();
+    $uploader->limit(column => 'sdomain', value => $self->id);
+    $uploader->limit(column => 'people', value => Jifty->web->current_user->id);
+    return $uploader->count;
+};
+
 =head2 current_offers
 
 return a collection of current_offers

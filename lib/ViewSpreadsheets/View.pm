@@ -97,7 +97,7 @@ template '/user' => page {
         br{};
         br{};
         show '/user/choose_date' if ($dom || $version);
-        if (Jifty->web->current_user->group eq 'admin') {
+        if (Jifty->web->current_user->group eq 'admin' || ($dom && $dom->is_uploader)) {
             br {};
             div{ attr { class => 'info-admin'};
                 strong { 'admin : ' };
