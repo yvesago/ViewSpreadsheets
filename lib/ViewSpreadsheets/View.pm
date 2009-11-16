@@ -6,6 +6,9 @@ use Jifty::View::Declare -base;
 use base qw/ Jifty::View::Declare::CRUD /;
 
 my $lang = Jifty::I18N->get_current_language || 'fr'; Jifty::DateTime->DefaultLocale($lang);
+  Jifty::View::Declare::CRUD->mount_view('User','ViewSpreadsheets::ViewCrudExtend','/user/admin');
+
+  Jifty::View::Declare::CRUD->mount_view('User','ViewSpreadsheets::ViewUserCrud','/user/admin/User/');
 
 foreach my $model ( Jifty->class_loader->models ) {
     my $bare_model;
