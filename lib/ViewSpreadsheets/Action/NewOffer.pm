@@ -50,7 +50,7 @@ sub take_action {
     my $fh = $self->argument_value('file');
 
     my $filename = scalar($fh);
-    # TODO clean file name : ascii char, no white space
+    $filename = ViewSpreadsheets->clean_file_name($filename);
 
     my $destdir = Jifty::Util->app_root().'/share/web/static/files/';
 

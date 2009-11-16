@@ -88,7 +88,7 @@ sub take_action {
        };
 
     my $filename = $testfile || scalar($fh);
-    # TODO clean file name : ascii char, no white space
+    $filename = ViewSpreadsheets->clean_file_name($filename);
 
     my $destdir = ($testfile)? 't/':Jifty::Util->app_root().'/share/web/static/files/';
 

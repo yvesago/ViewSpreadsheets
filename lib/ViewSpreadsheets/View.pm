@@ -61,10 +61,10 @@ template '/' => page {
         li { strike{'recherches par date'}};
         li { strike{'numéro de ligne excel'}; };
         li { strike{'tri des colones par ordre d\'origine'}; };
-        li { 'nettoyage nom de fichier'};
+        li { strike {'nettoyage nom de fichier'} };
         li { strike{ 'lignes à exclure'} };
         li { strike{hyperlink( label => 'color picker', url => 'http://www.web2media.net/laktek/2008/10/27/really-simple-color-picker-in-jquery/'); } };
-        li { 'uploader par domain' };
+        li { strike {'uploader par domain'} };
         li { strike{'nlle lignes'}; outs 'highlignt2'; };
     };
 };

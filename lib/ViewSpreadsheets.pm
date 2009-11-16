@@ -72,6 +72,33 @@ sub mydate {
   return $dt;
 };
 
+=head2 conv2ascii
+
+ convert accent character to ascii
+
+=cut
+
+sub conv2ascii {
+ my ($self,$string) = @_;
+ return unac_string('latin1',$string);
+};
+
+=head2 clean_file_name
+
+
+=cut
+
+use Text::Unaccent;
+
+sub clean_file_name {
+    my $self = shift;
+    my $string = shift;
+    $string=~s/[ ']/-/g;
+    $string=~s/#/Sharp/g;
+    $string=$self->conv2ascii($string);
+    $string=~s/[^A-Za-z0-9>\-_]//g;
+    return $string;
+};
 
 =head1 AUTHOR
 
