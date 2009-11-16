@@ -1,0 +1,85 @@
+@import "colorPicker.css";
+
+body {
+     font:normal 12px tahoma, verdana, helvetica;
+     background: white;
+}
+
+.leftcol {
+  float: left;
+  width: 20%;
+  margin-right: 1em;
+  clear;
+}
+
+.rightcol {
+  float: left;
+  width: 70%;
+}
+
+.red {
+    color: #900;
+}
+
+.fildesc {
+  margin:10px;
+  border-collapse: collapse;
+  border-bottom:hidden;
+}
+
+.filedesc th {
+    font-weight: bold;
+    text-align: center;
+    background-color: #ddd;
+}
+
+.filedesc td {
+    text-align: right;
+}
+
+.nav_content a, .content a {
+   text-decoration: none;
+}
+
+.content th {
+    text-align: center;
+    background-color: #ddd;
+}
+
+.content img {
+    vertical-align:text-bottom;
+}
+
+.l1 {
+    background-color: #f1f6ff;
+}
+
+.highlight-blue {
+    background-color: #9BA8F8;
+}
+
+.highlight-red {
+    background-color: #FB9898;
+}
+
+.highlight-green {
+    background-color: #98FB98;
+}
+
+.info-admin {
+       background-color: #ccdddd;
+}
+
+.ui-timepickr span {
+    border:0;
+    color:#ccc;
+    background:#333;
+    font-weight:bold;
+    border:1px solid #555;
+}
+.ui-timepickr span:hover {
+    color:#eee;
+    background:#333;
+    border:1px solid #777;
+}
+
