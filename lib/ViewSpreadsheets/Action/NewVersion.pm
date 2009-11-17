@@ -122,7 +122,7 @@ sub take_action {
            my $valid_row = 0;
            my $numcell = $sheet->{Cells}[$row][$domain->filedesc->pos_pp -1];
 
-           if ($numcell && $numcell->{Val} =~m/^(-?)\d/ ) {
+           if ($numcell && $numcell->{Val} =~m/^(-?)(\s?)\d/ ) {
                 $val = $numcell->{Val};
                 # catch font and back color
                 my @cellcolor = @{$numcell->{Format}->{Fill}};

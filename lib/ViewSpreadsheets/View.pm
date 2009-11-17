@@ -268,6 +268,7 @@ template '/user/admin/upload' => page {
     my $version = Jifty->web->session->get('Version');
     Jifty->web->session->set('Version' => undef)
         if ($version && $version->start_date);
+    Jifty->web->session->set(Search => undef);
     div { attr { class => 'leftcol' };
         show '/user/dom_menu';
         br {};
@@ -290,10 +291,12 @@ template '/user/admin/upload' => page {
         br {};
         show '/user/admin/filedesc';
         hr {};
-        h2 { 'Vérifiez le fichier importé' };
-        show '/user/file_search';
-        render_region(name => 'filecontent', path => '/user/filecontent');
-        show '/user/choose_nblines';
+        if ($version) {
+            h2 { 'Vérifiez le fichier importé' };
+            show '/user/file_search';
+            render_region(name => 'filecontent', path => '/user/filecontent');
+            show '/user/choose_nblines';
+        };
     };
 };
 
