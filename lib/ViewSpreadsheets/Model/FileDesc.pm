@@ -30,7 +30,7 @@ use ViewSpreadsheets::Record schema {
         render as 'ViewSpreadsheets::SimpleColor',
         hints is 'Highlight line with color';
     column high1_render =>
-        valid_values are qw(no red green blue),
+        valid_values are qw(no red green blue yellow),
         hints is 'Render line with color';
     column high2_pos =>
         hints is 'Highlight line',
@@ -51,7 +51,7 @@ use ViewSpreadsheets::Record schema {
 # Your model-specific methods go here.
 
 sub ViewSpreadsheets::SimpleColor::defaultColors { return "['F00', '0F0', '00f', 'fff', '000']"; };
-sub ViewSpreadsheets::SimpleColor::addColors { return "['900', '090', '009', 'ccc']"; };
+sub ViewSpreadsheets::SimpleColor::addColors { return "['900', '090', '009', 'ccc', 'ffff00', '99cc00', '00cc99' ]"; };
 
 =head2 current_user_can
 
