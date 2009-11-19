@@ -1,0 +1,80 @@
+		Production INSTALL
+dep
+===
+apt-get install libjifty-plugin-authentication-cas-perl libjifty-plugin-wikitoolbar-perl
+apt-get install libspreadsheet-parseexcel-perl libtext-markdown-perl libtext-unaccent-perl
+
+mysql
+=====
+mysqladmin create viewspreadsheets
+mysql mysql
+> grant all privileges on viewspreadsheets.* to 'user'@'localhost' identified by 'passwd';
+> flush privileges;
+
+config
+======
+etc/config.yml
+set : mysql, user, password, web url
+
+apache dirs
+===========
+mkdir log
+mkdir var
+mkdir share/web/static/files 
+chown www-data log var share/web/static/files
+
+jifty schema --setup
+
+apache vhost
+============
+# viewspreadsheets
+ FastCgiServer /home/www/viewspreadsheets/bin/jifty -initial-env JIFTY_COMMAND=fastcgi -processes 3
+<VirtualHost viewspreadsheets.univ.fr:80>
+  ServerName viewspreadsheets.univ.fr
+  AddHandler fastcgi-script fcgi
+  DocumentRoot /home/www/viewspreadsheets/share/web/templates
+  ScriptAlias /  /home/www/viewspreadsheets/bin/jifty/
+
+ <Directory /home/www/viewspreadsheets/bin/>
+    SetHandler fastcgi-script
+    Options +ExecCGI
+ </Directory>
+
+CustomLog /home/www/viewspreadsheets/log/access_log combined
+ErrorLog /home/www/viewspreadsheets/log/error_log
+</VirtualHost>
+
+/etc/init.d/apache2 reload
+
+=> try to start a first connexion to register user
+
+logrotate
+=========
+/home/www/viewspreadsheets/log/*log {
+    weekly
+    missingok
+    rotate 50
+    compress
+    delaycompress
+    notifempty
+    create 640 root www-data
+    sharedscripts
+    postrotate
+        /etc/init.d/apache2 reload > /dev/null
+    endscript
+}
+
+cron
+====
+add
+08 * * * * www-data   /usr/bin/wget http://viewspreadsheets.univ.fr/ -q
+a request each hour to keep mysql connection open
+
+INITIAL settings
+================
+mysql viewspreadsheets
+> update users set user_role='admin' where id='1';
+> INSERT INTO `domains` VALUES(1,'Dell - Portables',1,'');
+
+set first user as admin, you need at least one domain
+
