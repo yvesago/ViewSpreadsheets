@@ -177,7 +177,7 @@ sub take_action {
                         if $backcolor eq $domain->filedesc->high2_color || $fontcolor eq $domain->filedesc->high2_color;
                 }
                 else {
-                $highlight = undef;
+                #$highlight = undef;
                 };
 
                #warn $highlight ;
