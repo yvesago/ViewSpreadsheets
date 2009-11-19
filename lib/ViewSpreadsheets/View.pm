@@ -51,22 +51,6 @@ template '/' => page {
     br{};
     hyperlink(label => "Consulter",url => '/user');
     br {};
-    h2 {'TODO'};
-    ul {
-        li { 'limiter personnels' };
-        li {  strike{'Messages avec gestion dynamique par domaine'}; };
-        li {  strike{'Messages page publique'}; };
-        li { strike{'Offres promotionnelles'} };
-        li { strike{'date de fin dernier domaine '}};
-        li { strike{'recherches par date'}};
-        li { strike{'numéro de ligne excel'}; };
-        li { strike{'tri des colones par ordre d\'origine'}; };
-        li { strike {'nettoyage nom de fichier'} };
-        li { strike{ 'lignes à exclure'} };
-        li { strike{hyperlink( label => 'color picker', url => 'http://www.web2media.net/laktek/2008/10/27/really-simple-color-picker-in-jquery/'); } };
-        li { strike {'uploader par domain'} };
-        li { strike{'nlle lignes'}; outs 'highlignt2'; };
-    };
 };
 
 template '/user' => page {
