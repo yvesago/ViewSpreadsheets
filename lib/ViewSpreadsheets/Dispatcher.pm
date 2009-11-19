@@ -45,6 +45,7 @@ before '/user*' => run {
                 $bare_model = $1;
             };
             next if $bare_model eq 'Spreadsheet';
+            next if $bare_model eq 'uploader';
             $sub_admin->child( $bare_model => url =>  '/user/admin/crud?J:V-region-crud=/user/admin/'.$bare_model . '-list');
         };
     };
