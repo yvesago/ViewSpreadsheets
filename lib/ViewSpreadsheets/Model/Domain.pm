@@ -19,9 +19,25 @@ use ViewSpreadsheets::Record schema {
 # Your model-specific methods go here.
 
 sub before_delete {
-    # TODO: remove versions
-    # TODO: remove offers
-    # TODO: remove uploaders
+    my $self = shift;
+
+    # remove offers
+    my $offers = ViewSpreadsheets::Model::OfferCollection->new();
+    $offers->limit(column => 'sdomain', value => $self->id);
+    while (my $offer = $offers->next ) { $offer->delete; };
+    # remove versions
+    my $versions = ViewSpreadsheets::Model::VersionCollection->new();
+    $versions->limit(column => 'sdomain', value => $self->id);
+    while (my $ver = $versions->next ) { $ver->delete; };
+    # remove uploaders
+    my $uploaders = ViewSpreadsheets::Model::uploaderCollection->new();
+    $uploaders->limit(column => 'sdomain', value => $self->id);
+    while (my $up = $uploaders->next ) { $up->delete; };
+
+    # clear session
+    Jifty->web->session->set('Dom' => undef);
+
+    return 1;
 };
 
 =head2 is_uploader
