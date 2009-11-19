@@ -175,7 +175,7 @@ template '/user/version' => sub {
     h3 { 'Versions disponibles' };
     my $col = ViewSpreadsheets::Model::VersionCollection->new();
     $col->limit(column => 'sdomain', value => $dom->id) ;
-    $col->limit(column => 'start_date', value => undef, operator => 'not') ;
+    $col->limit(column => 'start_date', value => '', operator => '!=') ;
     $col->order_by(column => 'start_date', order=> 'DESC');
     while (my $v = $col->next ) {
         my $label = $v->start_date->strftime("%a %d %b %Y %H:%M:%S");
@@ -191,7 +191,7 @@ template '/user/version_menu' => sub {
     my $top = Jifty->web->{navigation} = Jifty::Web::Menu->new( label => 'Versions' );
     my $col = ViewSpreadsheets::Model::VersionCollection->new();
     $col->limit(column => 'sdomain', value => $dom->id) ;
-    $col->limit(column => 'start_date', value => undef, operator => 'not') ;
+    $col->limit(column => 'start_date', value => '', operator => '!=') ;
     $col->order_by(column => 'start_date', order=> 'DESC');
     while (my $v = $col->next ) {
         my $date = $v->start_date->strftime("%a %d %b %Y");
