@@ -50,6 +50,10 @@ body {
     vertical-align:text-bottom;
 }
 
+.download img {
+    vertical-align:middle;
+}
+
 .l1 {
     background-color: #f1f6ff;
 }

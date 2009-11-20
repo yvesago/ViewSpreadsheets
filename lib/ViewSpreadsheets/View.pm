@@ -107,16 +107,22 @@ template '/user' => page {
                 while (my $offer = $offers->next) {
                     li {
                     if ($offer->msg) { outs_raw ViewSpreadsheets::myprint($offer->msg); br{};};
-                    strong { 'Télécharger : ' }; hyperlink(label =>  $offer->filename, url => '/files/'. $offer->filename);br{};
+                    div { attr {class => 'download' };
+                        img { attr { src => '/img/download-offre.png' }; };
+                        strong { 'Télécharger : ' }; hyperlink(label =>  $offer->filename, url => '/files/'. $offer->filename);
+                    };
                     outs 'Valable du '.$offer->start_date->strftime("%a %d %b %Y %H:%M:%S").' au '.
                         $offer->end_date->strftime("%a %d %b %Y %H:%M:%S");
                     };
                 };
             };
         };
+        strong {'BPU'};
         if ($version) {
-            strong { 'Télécharger : ' }; hyperlink(label =>  $version->filename, url => '/files/'. $version->filename);
-            br {};
+            div { attr {class => 'download' };
+                img { attr { src => '/img/download.png' }; };
+                strong { 'Télécharger : ' }; hyperlink(label =>  $version->filename, url => '/files/'. $version->filename);
+            };
             show '/user/file_search';
             render_region(name => 'filecontent', path => '/user/filecontent');
             show '/user/choose_nblines';
