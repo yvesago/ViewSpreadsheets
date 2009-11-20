@@ -15,9 +15,10 @@ foreach my $model ( Jifty->class_loader->models ) {
     if ( $model =~ /^.*::(.*?)$/ ) {
         $bare_model = $1;
     };
-
+ if ( $bare_model ne 'User' ) {
     alias Jifty::View::Declare::CRUD under '/user/admin/' . $bare_model,
             { object_type => $bare_model };
+    };
 
     template '/user/admin/'.$bare_model. '-list' => sub {
         form {
