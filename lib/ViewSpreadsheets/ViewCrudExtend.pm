@@ -93,9 +93,9 @@ private template 'sub_list' => sub {
     my $collection = Jifty->app_class('Model',$model_name.'Collection')->new;#$model_class->_current_collection();
     $collection->limit(column => $column, value => $id);
     div { { class is 'sublist form_field inline'}
-    span { { class is 'label text argument-name'} 
+    div { { class is 'label text argument-name'}
     outs $model_name; };
-    span { { class is 'sublist-'.$model_name }
+    div { { class is 'sublist-'.$model_name }
     #div { { class is 'sublist inline sublist-'.$model_name }
         while ( my $item = $collection->next) { 
             render_region(
@@ -156,7 +156,7 @@ template 'add_sub_item' => sub {
                 onclick => [
                     { submit       => $action },
                     { refresh_self => 1 },
-                    {   element => Jifty->web->current_region->parent->get_element( 'span.sublist-'.$model_name),
+                    {   element => Jifty->web->current_region->parent->get_element( 'div.sublist-'.$model_name),
                         append => $self->fragment_for('sub_view'),
                         args   => {
                             model_name => $model_name,
@@ -191,7 +191,7 @@ template 'sub_update' => sub {
     );
 
     div {
-        { class is "crud update item inline " . $object_type }
+        { class is "crud-item " . $object_type }
 
         show('./edit_subitem', $update, $mask );
         show('./edit_subitem_controls', $record, $update, $mask);
@@ -228,7 +228,7 @@ private template edit_subitem_controls => sub {
         moniker => 'delete-' . Jifty->web->serial,
     );
         div {
-            { class is 'crud editlink' };
+            { class is 'crud-item editlink' };
             hyperlink(
                 label   => _("Save"),
                 onclick => [

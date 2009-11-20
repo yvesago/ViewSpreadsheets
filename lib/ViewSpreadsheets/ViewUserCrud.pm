@@ -20,27 +20,31 @@ override view to add a close button and subviews for one to many relation ship
 template 'view' => sub {
     my $self   = shift;
     my $id = get('id');
-    my $block = get('view_block')||0;
-    return if (!$id);
     my $record = $self->_get_record( get('id') );
 
+    return unless $record->id;
     my $update = $record->as_update_action(
         moniker => "update-" . Jifty->web->serial,
     );
 
-    div {
-        { class is 'crud read item inline' };
-        my @fields = $self->display_columns($update);
-        foreach my $field (@fields) {
-            div { { class is 'view-argument-'.$field};
-            render_param( $update => $field,  render_mode => 'read'  );
-            }; 
+    #my @fields = $self->display_columns($update);
+    my @fields = $self->display_columns();
+    foreach my $field (@fields) {
+        div { { class is 'crud-field view-argument-'.$field};
+         $self->render_field(
+                        mode   => 'view',
+                        action => $update,
+                        field  => $field,
+                        label  => '',
+                    );
         };
-   #show ('./view_item_controls', $record, $update); 
-    show ('../sub_list','uploader','people', $id);
-    show ('./view_item_controls', $record, $update); 
-     };
-    hr {};
+    };
+    div { { class is 'crud-field view-argument-uploader'};
+     show ('../sub_list','uploader','people', $id);
+    };
+    div { { class is 'crud-field view-argument-uploader'};
+        show ('./view_item_controls', $record, $update);
+    };
 
 };
 
