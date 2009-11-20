@@ -106,7 +106,7 @@ template '/user' => page {
             ul {
                 while (my $offer = $offers->next) {
                     li {
-                    if ($offer->msg) { outs_raw ViewSpreadsheets::myprint($offer->msg); br{};};
+                    if ($offer->msg) { outs_raw ViewSpreadsheets::myprint($offer->msg); };
                     div { attr {class => 'download' };
                         img { attr { src => '/img/download-offre.png' }; };
                         strong { 'Télécharger : ' }; hyperlink(label =>  $offer->filename, url => '/files/'. $offer->filename);
