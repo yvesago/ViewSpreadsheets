@@ -5,7 +5,7 @@ package ViewSpreadsheets::View;
 use Jifty::View::Declare -base;
 use base qw/ Jifty::View::Declare::CRUD /;
 
-my $lang = Jifty::I18N->get_current_language || 'fr'; Jifty::DateTime->DefaultLocale($lang);
+my $lang = Jifty::I18N->get_current_language || 'fr'; Jifty::DateTime->DefaultLocale('fr');
   Jifty::View::Declare::CRUD->mount_view('User','ViewSpreadsheets::ViewCrudExtend','/user/admin');
 
   Jifty::View::Declare::CRUD->mount_view('User','ViewSpreadsheets::ViewUserCrud','/user/admin/User/');
@@ -65,9 +65,11 @@ template '/user' => page {
         if ($version && $version->start_date) {
           if ($dom->current_version && $version->id == $dom->current_version->id) {
               my $reftime = Jifty->web->session->get('RefTime');
+			  img {attr { src => '/images/silk/error.png' };  } if $reftime;
               ($reftime) ?
                   strong { ViewSpreadsheets::mydate($reftime)->strftime("%A %d %b %Y %H:%M:%S") }:
                   strong { 'Version courante' };
+			  img {attr { src => '/images/silk/error.png' };  } if $reftime;
               br {};
           };
           strong { 'Version : '};
