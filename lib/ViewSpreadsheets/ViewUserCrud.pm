@@ -27,8 +27,8 @@ template 'view' => sub {
         moniker => "update-" . Jifty->web->serial,
     );
 
-    #my @fields = $self->display_columns($update);
-    my @fields = $self->display_columns();
+    my @fields = $self->display_columns($update);
+    #my @fields = $self->display_columns();
     foreach my $field (@fields) {
         div { { class is 'crud-field view-argument-'.$field};
          $self->render_field(
