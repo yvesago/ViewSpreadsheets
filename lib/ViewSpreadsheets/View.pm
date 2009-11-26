@@ -346,6 +346,9 @@ template '/user/filecontent' => sub {
     if ( Jifty->web->response->result('search') ) {
        $search = Jifty->web->response->result('search')->content('search');
        Jifty->web->session->set(Search => $search);
+       my ($floatprice) = $search->_where_clause() =~ m/price = '\d+(.*)'/;
+        $search->limit(column => 'price', value => '62.4', operator => 'LIKE')
+            if $floatprice;
        };
 
     my $FileContent = $search || ViewSpreadsheets::Model::SpreadsheetCollection->new();
