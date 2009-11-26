@@ -346,7 +346,7 @@ template '/user/filecontent' => sub {
     if ( Jifty->web->response->result('search') ) {
        $search = Jifty->web->response->result('search')->content('search');
        Jifty->web->session->set(Search => $search);
-       my ($price,$floatprice) = $search->_where_clause() =~ m/price = '(\d+)\.(.*)'/;
+       my ($price,$floatprice) = $search->_where_clause() =~ m/price = '(-?\d+)\.(.*)'/;
         $search->limit(column => 'price', value => $price.'.'.$floatprice, operator => 'LIKE')
             if $floatprice;
        };
